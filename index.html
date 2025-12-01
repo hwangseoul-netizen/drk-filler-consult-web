@@ -1,175 +1,82 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>닥터케이 필러 상담</title>
-
-  <!-- 기본 스타일 -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-    }
-    .app {
-      max-width: 900px;
-      margin: auto;
-      padding: 16px;
-    }
-    h1 {
-      margin-bottom: 8px;
-      color: #222;
-    }
-    textarea, input {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      margin-top: 10px;
-    }
-    .card {
-      background: white;
-      padding: 18px;
-      margin-top: 20px;
-      border-radius: 16px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-    }
-    .btn {
-      width: 100%;
-      background: #ff3f89;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      margin-top: 20px;
-      font-size: 17px;
-      cursor: pointer;
-    }
-  </style>
-
-</head>
-
-<body>
-<div class="app">
-  <h1>닥터케이 필러 상담</h1>
-  <p>“이거 필러로 돼요? 얼마나 넣어야 해요?”<br>
-  전신을 필러로 다뤄온 닥터케이가 온라인에서 방향을 잡아주는 상담입니다.</p>
-
-  <div class="card">
-    <h3>1단계 · 어디가 고민이야?</h3>
-    <textarea id="part" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등"></textarea>
-
-    <h3>지금 제일 고민되는 부분</h3>
-    <textarea id="concern" placeholder="예: 골반이 너무 얇아서 라인이 없어요 등"></textarea>
-
-    <h3>2단계 · 바뀌었으면 하는 느낌</h3>
-    <textarea id="goal" placeholder="예: 자연스러운 볼륨, 라운드 느낌 등"></textarea>
-
-    <h3>3단계 · 어느 정도까지 바꾸고 싶어?</h3>
-    <select id="change_level" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;">
-      <option value="">선택</option>
-      <option value="soft">살짝 티만</option>
-      <option value="standard">확실하게</option>
-      <option value="strong">이미지 체인지</option>
-    </select>
-
-    <h3>사진 업로드 (정면 / 좌45 / 우45 / 후면)</h3>
-    <input type="file" id="photo_front" accept="image/*" />
-    <input type="file" id="photo_left" accept="image/*" />
-    <input type="file" id="photo_right" accept="image/*" />
-    <input type="file" id="photo_back" accept="image/*" />
-
-    <button class="btn" onclick="submitCase()">상담 보내기</button>
-  </div>
-
-  <p id="result" style="margin-top:20px; font-size:16px; color:#333;"></p>
-</div>
-
-<!-- Supabase JS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-/* --------------------------
-   🔥 1) Supabase 인증 연결 세팅
---------------------------- */
-const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
+  const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* --------------------------
-   🔥 2) 사진 업로드 함수
---------------------------- */
-async function uploadImage(file) {
-  if (!file) return null;
+  // 업로드 함수
+  async function uploadFile(file, pathName) {
+    try {
+      if (!file) return null;
 
-  const fileName = Date.now() + "_" + file.name;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${pathName}.${fileExt}`;
+      const filePath = `${Date.now()}_${fileName}`;
 
-  let { data, error } = await supabase.storage
-    .from("photos")
-    .upload(fileName, file);
+      let { error } = await supabase.storage
+        .from("drk-photos")
+        .upload(filePath, file, {
+          upsert: false,
+        });
 
-  if (error) {
-    console.log("업로드 오류:", error);
-    return null;
+      if (error) {
+        console.error("Upload error:", error);
+        alert("업로드 실패! 다시 업로드해줘 🙏");
+        return null;
+      }
+
+      const { data } = supabase.storage
+        .from("drk-photos")
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (e) {
+      console.error("Upload exception:", e);
+      return null;
+    }
   }
 
-  const { data: publicUrl } = supabase.storage
-    .from("photos")
-    .getPublicUrl(fileName);
+  // 상담 제출
+  async function submitCase() {
+    document.getElementById("loadingText").style.display = "block";
 
-  return publicUrl.publicUrl;
-}
+    const part = document.getElementById("part").value;
+    const concern = document.getElementById("concern").value;
+    const goal = document.getElementById("goal").value;
+    const changeLevel = document.getElementById("changeLevel").value;
 
-/* --------------------------
-   🔥 3) 상담 데이터 Supabase 저장
---------------------------- */
-async function submitCase() {
-  document.getElementById("result").innerText = "업로드 중... 잠시만 기다려줘!";
+    const front = document.getElementById("photo_front").files[0];
+    const left = document.getElementById("photo_left").files[0];
+    const right = document.getElementById("photo_right").files[0];
+    const back = document.getElementById("photo_back").files[0];
 
-  const part = document.getElementById("part").value;
-  const concern = document.getElementById("concern").value;
-  const goal = document.getElementById("goal").value;
-  const change_level = document.getElementById("change_level").value;
+    const frontUrl = await uploadFile(front, "front");
+    const leftUrl = await uploadFile(left, "left");
+    const rightUrl = await uploadFile(right, "right");
+    const backUrl = await uploadFile(back, "back");
 
-  const photo_front = document.getElementById("photo_front").files[0];
-  const photo_left = document.getElementById("photo_left").files[0];
-  const photo_right = document.getElementById("photo_right").files[0];
-  const photo_back = document.getElementById("photo_back").files[0];
-
-  // 이미지 업로드
-  const frontUrl  = await uploadImage(photo_front);
-  const leftUrl   = await uploadImage(photo_left);
-  const rightUrl  = await uploadImage(photo_right);
-  const backUrl   = await uploadImage(photo_back);
-
-  // DB 저장
-  const { data, error } = await supabase
-    .from("cases")
-    .insert({
+    const { error } = await supabase.from("cases").insert({
       part,
       concern,
       goal,
-      change_level,
+      change_level: changeLevel,
       photos_front: frontUrl,
       photos_left: leftUrl,
       photos_right: rightUrl,
       photos_back: backUrl,
       status: "new",
-      messages: []
+      messages: [],
     });
 
-  if (error) {
-    document.getElementById("result").innerText = "저장 오류: " + error.message;
-    return;
+    document.getElementById("loadingText").style.display = "none";
+
+    if (error) {
+      alert("제출 중 오류! 다시 시도해줘 🙏");
+      console.error(error);
+      return;
+    }
+
+    alert("상담 신청이 완료되었어! 최대한 빨리 확인해볼게 👍");
   }
-
-  document.getElementById("result").innerText = "상담 접수 완료! 닥터케이가 확인 후 답장할게 :)";
-}
 </script>
-
-</body>
-</html>
