@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>닥터케이 필러 상담</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f7f7fa;
+      --card: #ffffff;
+      --primary: #ff4fa3;
+      --primary-soft: #ffe4f2;
+      --accent: #4ea8de;
+      --text-main: #222222;
+      --text-sub: #555555;
+      --border-soft: #e2e2e8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .logo-title {
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .mode-toggle {
+      display: flex;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      background: #fff;
+    }
+    .mode-btn {
+      padding: 6px 14px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-sub);
+    }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #f0f0f5;
+    }
+    .hero-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .block-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .label {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+    .input, .textarea, select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      padding: 8px 10px;
+      font-size: 13px;
+      background: #f3f3f7;
+      color: var(--text-main);
+    }
+    .textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .tag-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-sub);
+    }
+    .tag.active {
+      border-color: var(--accent);
+      background: #e7f3ff;
+      color: #1b6ea8;
+      font-weight: 700;
+    }
+    .change-row {
+      display: flex;
+      gap: 6px;
+    }
+    .change-btn {
+      flex: 1;
+      border-radius: 999px;
+      padding: 8px 6px;
+      border: none;
+      background: #f3f3f7;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+    .change-btn.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+    .photo-label {
+      font-size: 12px;
+      color: #777;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .btn-main {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 12px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .submit-msg {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #007700;
+    }
+
+    /* 닥터 모드 리스트 */
+    .case-card {
+      border-radius: 14px;
+      padding: 10px;
+      background: #f5f5fa;
+      border: 1px solid var(--border-soft);
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+    .case-card.new {
+      border-color: var(--primary);
+    }
+    .case-card.selected {
+      border-color: var(--accent);
+      background: #eaf3ff;
+    }
+    .case-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .case-part {
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .case-part-group {
+      font-size: 11px;
+      color: #777;
+    }
+    .case-status {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .case-meta {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+    .case-preview {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .detail-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .detail-label {
+      font-size: 12px;
+      color: #777;
+    }
+    .detail-body {
+      font-size: 13px;
+      color: var(--text-main);
+      margin-top: 2px;
+      white-space: pre-wrap;
+    }
+
+    .photos-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .photo-box {
+      flex: 1 1 150px;
+      background: #f3f3f7;
+      border-radius: 10px;
+      padding: 6px;
+    }
+    .photo-box-label {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+    .photo-preview {
+      width: 100%;
+      border-radius: 8px;
+      background: #e0e0ea;
+      object-fit: cover;
+      max-height: 180px;
+    }
+    .photo-empty {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .chat-box {
+      margin-top: 6px;
+      background: #f3f3f7;
+      border-radius: 12px;
+      padding: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    .chat-user {
+      background: #ffffff;
+      align-self: flex-start;
+    }
+    .chat-doctor {
+      background: var(--accent);
+      color: #fff;
+      align-self: flex-end;
+    }
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 640px) {
+      .app { padding: 12px; }
+      .hero-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo">
+        <div class="logo-badge">K</div>
+        <div class="logo-title">닥터케이 필러 상담</div>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-user">사용자 모드</button>
+        <button class="mode-btn" id="btn-doctor">닥터 모드</button>
+      </div>
+    </header>
+
+    <!-- 사용자 모드 -->
+    <div id="user-mode">
+      <div class="card">
+        <div class="hero-title">닥터케이 필러 상담</div>
+        <div class="hero-sub">
+          “이거 필러로 돼요? 얼마나 넣어야 해요?”<br />
+          전신을 필러로 압도적으로 예술을 해온 닥터케이가<br />
+          온라인에서 방향을 잡아주는 프리 상담이야. 놀랍지?<br />
+          실시간 채팅은 아니지만, <strong>탑 티어 답변을 기다리는 맛</strong>이 있어!
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="block-title">1단계 · 어디가 제일 고민이야?</div>
+        <label class="label">관심 부위 (자유 입력)</label>
+        <input id="part-input" class="input" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골, 손등…" />
+
+        <div style="height:8px"></div>
+        <label class="label">지금 제일 고민되는 부분</label>
+        <textarea id="concern-input" class="textarea"
+          placeholder="예: 골반이 너무 일자라서 레깅스핏이 안 예뻐요 / 어깨가 좁아서 상체가 답답해 보여요…"></textarea>
+      </div>
+
+      <div class="card">
+        <div class="block-title">2단계 · 바뀌었으면 하는 느낌·이미지</div>
+        <label class="label">원하는 분위기 / 이미지</label>
+        <textarea id="goal-input" class="textarea"
+          placeholder="예: 골반은 살짝 넓고 힙은 자연스럽게 볼륨 / 손등은 나이티만 줄어든 정도…"></textarea>
+
+        <div style="height:12px"></div>
+        <div class="block-title">3단계 · 어느 정도까지 바꾸고 싶어?</div>
+        <div class="change-row">
+          <button type="button" class="change-btn" data-change="light">살짝 티만</button>
+          <button type="button" class="change-btn" data-change="standard">확실하게</button>
+          <button type="button" class="change-btn" data-change="full">이미지 체인지</button>
+        </div>
+
+        <div style="height:12px"></div>
+        <label class="label">참고 전후·이미지 메모</label>
+        <textarea id="refnote-input" class="textarea"
+          placeholder="예: 인스타에서 본 전후 느낌 / 본인이 보정한 후사진 설명 / 셀럽 이미지를 닮고 싶다 등"></textarea>
+      </div>
+
+      <div class="card">
+        <div class="block-title">4단계 · 본인 사진 업로드 (정면 / 좌45 / 우45 / 후면)</div>
+        <label class="label">지금은 파일을 선택하면, 브라우저 안에만 저장돼. (나중에 서버 연결 예정)</label>
+
+        <div class="photo-label">정면</div>
+        <input id="front-file" type="file" accept="image/*" class="input" />
+
+        <div class="photo-label">좌 45°</div>
+        <input id="left-file" type="file" accept="image/*" class="input" />
+
+        <div class="photo-label">우 45°</div>
+        <input id="right-file" type="file" accept="image/*" class="input" />
+
+        <div class="photo-label">후면</div>
+        <input id="back-file" type="file" accept="image/*" class="input" />
+
+        <button id="submit-btn" class="btn-main">닥터케이에게 상담 보내기</button>
+        <div id="submit-msg" class="submit-msg"></div>
+      </div>
+    </div>
+
+    <!-- 닥터 모드 -->
+    <div id="doctor-mode" style="display:none;">
+      <div class="card">
+        <div class="hero-title">닥터케이 대기함</div>
+        <div class="hero-sub">
+          전국에서 올라온 “이거 필러로 돼요?” 케이스들이야.<br />
+          실시간 채팅이 아니라, <strong>차트 보듯이 하나씩 열어서 답변</strong> 남기는 구조라고 생각하면 돼.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="block-title">대기 중 케이스</div>
+        <div id="case-list"></div>
+      </div>
+
+      <div class="card" id="case-detail" style="display:none;">
+        <div class="block-title">선택된 케이스</div>
+        <div id="detail-basic"></div>
+        <div style="height:8px;"></div>
+        <div id="detail-texts"></div>
+        <div style="height:8px;"></div>
+
+        <div class="block-title">사진 (정면 / 좌45 / 우45 / 후면)</div>
+        <div id="detail-photos" class="photos-row"></div>
+
+        <div style="height:8px;"></div>
+        <div class="block-title">대화 내역</div>
+        <div id="detail-chat" class="chat-box">
+          <div class="chat-list" id="chat-list"></div>
+        </div>
+
+        <div style="height:8px;"></div>
+        <label class="detail-label">닥터케이 답변 추가</label>
+        <textarea id="doctor-reply" class="textarea"
+          placeholder="예: 필러로 어느 정도까지 가능한지, 볼륨 존(대략), 난이도, 주의점 등을 솔직하게 적어줘."></textarea>
+        <button id="reply-btn" class="btn-main">답변 보내기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== 공통 상태 ======
+    const btnUser = document.getElementById('btn-user');
+    const btnDoctor = document.getElementById('btn-doctor');
+    const userMode = document.getElementById('user-mode');
+    const doctorMode = document.getElementById('doctor-mode');
+
+    let submissions = [];
+
+    function loadSubmissions() {
+      try {
+        const raw = localStorage.getItem('dk_cases');
+        submissions = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        submissions = [];
+      }
+    }
+    function saveSubmissions() {
+      localStorage.setItem('dk_cases', JSON.stringify(submissions));
+    }
+
+    // ====== 모드 토글 ======
+    btnUser.addEventListener('click', () => {
+      btnUser.classList.add('active');
+      btnDoctor.classList.remove('active');
+      userMode.style.display = '';
+      doctorMode.style.display = 'none';
+    });
+    btnDoctor.addEventListener('click', () => {
+      btnDoctor.classList.add('active');
+      btnUser.classList.remove('active');
+      userMode.style.display = 'none';
+      doctorMode.style.display = '';
+      renderCaseList();
+      clearCaseDetail();
+    });
+
+    // ====== 사용자 모드 ======
+    const partInput = document.getElementById('part-input');
+    const concernInput = document.getElementById('concern-input');
+    const goalInput = document.getElementById('goal-input');
+    const refnoteInput = document.getElementById('refnote-input');
+
+    const changeButtons = document.querySelectorAll('.change-btn');
+    let changeLevel = "";
+
+    changeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        changeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        changeLevel = btn.getAttribute('data-change');
+      });
+    });
+
+    const frontFile = document.getElementById('front-file');
+    const leftFile = document.getElementById('left-file');
+    const rightFile = document.getElementById('right-file');
+    const backFile = document.getElementById('back-file');
+
+    const submitBtn = document.getElementById('submit-btn');
+    const submitMsg = document.getElementById('submit-msg');
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    submitBtn.addEventListener('click', async () => {
+      submitMsg.textContent = '';
+
+      const part = partInput.value.trim();
+      const concern = concernInput.value.trim();
+      const goal = goalInput.value.trim();
+      const refnote = refnoteInput.value.trim();
+
+      if (!part) {
+        submitMsg.textContent = '관심 부위를 한 줄이라도 적어줘.';
+        return;
+      }
+      if (!concern) {
+        submitMsg.textContent = '지금 제일 고민되는 부분을 적어줘.';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '보내는 중...';
+
+      const [front, left, right, back] = await Promise.all([
+        readFileAsDataURL(frontFile.files[0]),
+        readFileAsDataURL(leftFile.files[0]),
+        readFileAsDataURL(rightFile.files[0]),
+        readFileAsDataURL(backFile.files[0]),
+      ]);
+
+      const now = new Date().toISOString();
+      const firstMsgLines = [
+        `부위: ${part}`,
+        concern && `고민: ${concern}`,
+        goal && `원하는 모양: ${goal}`,
+        changeLevel && `변화 수준: ${changeLevel}`,
+        refnote && `참고 메모: ${refnote}`
+      ].filter(Boolean).join('\n');
+
+      const newCase = {
+        id: Date.now().toString(),
+        createdAt: now,
+        part,
+        concern,
+        goal,
+        refnote,
+        changeLevel,
+        photos: { front, left, right, back },
+        status: 'new',
+        messages: [
+          {
+            id: 'm_' + Date.now().toString(),
+            from: 'user',
+            text: firstMsgLines,
+            createdAt: now
+          }
+        ]
+      };
+
+      loadSubmissions();
+      submissions.unshift(newCase);
+      saveSubmissions();
+
+      partInput.value = '';
+      concernInput.value = '';
+      goalInput.value = '';
+      refnoteInput.value = '';
+      changeButtons.forEach(b => b.classList.remove('active'));
+      changeLevel = "";
+      frontFile.value = '';
+      leftFile.value = '';
+      rightFile.value = '';
+      backFile.value = '';
+
+      submitMsg.textContent = '문의가 접수됐어. 닥터케이가 순서대로 차근차근 답변해줄 거야.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '닥터케이에게 상담 보내기';
+    });
+
+    // ====== 닥터 모드 ======
+    const caseListDiv = document.getElementById('case-list');
+    const caseDetailCard = document.getElementById('case-detail');
+    const detailBasic = document.getElementById('detail-basic');
+    const detailTexts = document.getElementById('detail-texts');
+    const detailPhotos = document.getElementById('detail-photos');
+    const chatList = document.getElementById('chat-list');
+    const doctorReply = document.getElementById('doctor-reply');
+    const replyBtn = document.getElementById('reply-btn');
+
+    let selectedCaseId = null;
+
+    function renderCaseList() {
+      loadSubmissions();
+      caseListDiv.innerHTML = '';
+      if (!submissions.length) {
+        caseListDiv.innerHTML = '<div class="label">아직 접수된 케이스가 없어.</div>';
+        return;
+      }
+
+      submissions.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'case-card' +
+          (c.status === 'new' ? ' new' : '') +
+          (c.id === selectedCaseId ? ' selected' : '');
+        div.addEventListener('click', () => {
+          selectedCaseId = c.id;
+          renderCaseList();
+          renderCaseDetail(c.id);
+        });
+
+        const row = document.createElement('div');
+        row.className = 'case-row';
+        const left = document.createElement('div');
+        const partSpan = document.createElement('span');
+        partSpan.className = 'case-part';
+        partSpan.textContent = c.part;
+        const groupSpan = document.createElement('span');
+        groupSpan.className = 'case-part-group';
+        groupSpan.textContent = '';
+        left.appendChild(partSpan);
+        left.appendChild(document.createTextNode(' '));
+        left.appendChild(groupSpan);
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'case-status';
+        statusSpan.textContent = c.status === 'new' ? '새 문의' : '답변 있음';
+
+        row.appendChild(left);
+        row.appendChild(statusSpan);
+
+        const meta = document.createElement('div');
+        meta.className = 'case-meta';
+        meta.textContent = '변화 수준: ' + (c.changeLevel || '선택 안 함');
+
+        const preview = document.createElement('div');
+        preview.className = 'case-preview';
+        preview.textContent = c.concern || '—';
+
+        div.appendChild(row);
+        div.appendChild(meta);
+        div.appendChild(preview);
+        caseListDiv.appendChild(div);
+      });
+    }
+
+    function clearCaseDetail() {
+      caseDetailCard.style.display = 'none';
+      detailBasic.innerHTML = '';
+      detailTexts.innerHTML = '';
+      detailPhotos.innerHTML = '';
+      chatList.innerHTML = '';
+      doctorReply.value = '';
+    }
+
+    function renderCaseDetail(caseId) {
+      const c = submissions.find(x => x.id === caseId);
+      if (!c) {
+        clearCaseDetail();
+        return;
+      }
+      caseDetailCard.style.display = '';
+
+      detailBasic.innerHTML =
+        `<div class="detail-title">${c.part}</div>` +
+        `<div class="detail-label">변화 수준: ${c.changeLevel || '선택 안 함'}</div>`;
+
+      detailTexts.innerHTML =
+        `<div class="detail-label">고민</div>` +
+        `<div class="detail-body">${c.concern || '—'}</div>` +
+        `<div style="height:6px;"></div>` +
+        `<div class="detail-label">원하는 모양·분위기</div>` +
+        `<div class="detail-body">${c.goal || '—'}</div>` +
+        `<div style="height:6px;"></div>` +
+        `<div class="detail-label">참고 전후·이미지 메모</div>` +
+        `<div class="detail-body">${c.refnote || '—'}</div>`;
+
+      detailPhotos.innerHTML = '';
+
+      const photoNames = [
+        { key: 'front', label: '정면' },
+        { key: 'left', label: '좌 45°' },
+        { key: 'right', label: '우 45°' },
+        { key: 'back', label: '후면' },
+      ];
+
+      photoNames.forEach(p => {
+        const box = document.createElement('div');
+        box.className = 'photo-box';
+        const lab = document.createElement('div');
+        lab.className = 'photo-box-label';
+        lab.textContent = p.label;
+        box.appendChild(lab);
+
+        const dataUrl = c.photos && c.photos[p.key];
+        if (dataUrl) {
+          const img = document.createElement('img');
+          img.className = 'photo-preview';
+          img.src = dataUrl;
+          box.appendChild(img);
+        } else {
+          const span = document.createElement('div');
+          span.className = 'photo-empty';
+          span.textContent = '업로드된 사진 없음';
+          box.appendChild(span);
+        }
+
+        detailPhotos.appendChild(box);
+      });
+
+      chatList.innerHTML = '';
+      (c.messages || []).forEach(m => {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' +
+          (m.from === 'doctor' ? 'chat-doctor' : 'chat-user');
+        bubble.textContent = m.text;
+        chatList.appendChild(bubble);
+      });
+
+      doctorReply.value = '';
+    }
+
+    replyBtn.addEventListener('click', () => {
+      if (!selectedCaseId) return;
+      const txt = doctorReply.value.trim();
+      if (!txt) return;
+
+      const idx = submissions.findIndex(x => x.id === selectedCaseId);
+      if (idx === -1) return;
+      const now = new Date().toISOString();
+      const msg = {
+        id: 'd_' + Date.now().toString(),
+        from: 'doctor',
+        text: txt,
+        createdAt: now
+      };
+      submissions[idx].messages = submissions[idx].messages || [];
+      submissions[idx].messages.push(msg);
+      submissions[idx].status = 'answered';
+      saveSubmissions();
+      doctorReply.value = '';
+      renderCaseList();
+      renderCaseDetail(selectedCaseId);
+    });
+
+    // 초기 로드
+    loadSubmissions();
+  </script>
+</body>
+</html>
