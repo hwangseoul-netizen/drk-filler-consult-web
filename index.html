@@ -1,82 +1,268 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>닥터케이 필러 상담</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <style>
+    :root {
+      --bg: #f7f7fa;
+      --card: #ffffff;
+      --primary: #ff4fa3;
+      --primary-soft: #ffe4f2;
+      --text-main: #222222;
+      --text-sub: #7a7a7a;
+      --border-soft: #e2e2e8;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      color: var(--text-main);
+    }
+    .app {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .profile {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .toggle {
+      display: flex;
+      background: var(--primary-soft);
+      padding: 4px;
+      border-radius: 20px;
+    }
+    .toggle button {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #555;
+    }
+    .toggle .active {
+      background: var(--primary);
+      color: white;
+    }
 
-  // 업로드 함수
-  async function uploadFile(file, pathName) {
-    try {
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border-soft);
+    }
+    .label {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      font-size: 15px;
+      background: white;
+    }
+    textarea {
+      height: 90px;
+      resize: none;
+    }
+    .file-area {
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--primary);
+      color: white;
+      border: 0;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+    #loadingText {
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--primary);
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- HEADER -->
+    <header>
+      <div class="header-left">
+        <div class="profile">K</div>
+        <strong>닥터케이 필러 상담</strong>
+      </div>
+
+      <div class="toggle">
+        <button id="userModeBtn" class="active">사용자 모드</button>
+        <button id="doctorModeBtn">닥터 모드</button>
+      </div>
+    </header>
+
+    <p style="line-height:1.6; font-size:15px; margin-bottom:20px;">
+      “이거 필러로 돼요? 얼마나 넣어야 해요?”<br>
+      전신을 필러로 다뤄온 닥터케이가 온라인에서 방향을 잡아주는 상담입니다.
+    </p>
+
+    <!-- STEP 1 -->
+    <div class="card">
+      <div class="label">1단계 · 어디가 고민이야?</div>
+      <input id="part" class="input" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등">
+      <textarea id="concern" placeholder="예: 골반이 너무 얇아서 라인이 없어요 등"></textarea>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card">
+      <div class="label">2단계 · 바뀌었으면 하는 느낌</div>
+      <textarea id="goal" placeholder="예: 자연스러운 볼륨, 라운드 느낌 등"></textarea>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card">
+      <div class="label">3단계 · 어느 정도까지 바꾸고 싶어?</div>
+      <select id="changeLevel">
+        <option value="soft">선택</option>
+        <option value="soft">살짝 티만</option>
+        <option value="standard">적당하게</option>
+        <option value="hard">확실하게</option>
+      </select>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="card">
+      <div class="label">사진 업로드 (정면 / 좌45 / 우45 / 후면)</div>
+      <div class="file-area">
+        <input type="file" id="photo_front">
+      </div>
+      <div class="file-area">
+        <input type="file" id="photo_left">
+      </div>
+      <div class="file-area">
+        <input type="file" id="photo_right">
+      </div>
+      <div class="file-area">
+        <input type="file" id="photo_back">
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="sendConsult()">상담 보내기</button>
+
+    <div id="loadingText">업로드 중… 잠시만 기다려줘!</div>
+
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- MAIN LOGIC -->
+  <script>
+    const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function uploadToSupabase(file, name) {
       if (!file) return null;
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${pathName}.${fileExt}`;
-      const filePath = `${Date.now()}_${fileName}`;
+      const ext = file.name.split(".").pop();
+      const fileName = `${Date.now()}_${name}.${ext}`;
 
-      let { error } = await supabase.storage
+      const { error } = await supabaseClient.storage
         .from("drk-photos")
-        .upload(filePath, file, {
-          upsert: false,
-        });
+        .upload(fileName, file);
 
       if (error) {
-        console.error("Upload error:", error);
-        alert("업로드 실패! 다시 업로드해줘 🙏");
+        alert("사진 업로드 실패! 다시 시도해줘🙏");
+        console.log(error);
         return null;
       }
 
-      const { data } = supabase.storage
+      const { data } = supabaseClient.storage
         .from("drk-photos")
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       return data.publicUrl;
-    } catch (e) {
-      console.error("Upload exception:", e);
-      return null;
-    }
-  }
-
-  // 상담 제출
-  async function submitCase() {
-    document.getElementById("loadingText").style.display = "block";
-
-    const part = document.getElementById("part").value;
-    const concern = document.getElementById("concern").value;
-    const goal = document.getElementById("goal").value;
-    const changeLevel = document.getElementById("changeLevel").value;
-
-    const front = document.getElementById("photo_front").files[0];
-    const left = document.getElementById("photo_left").files[0];
-    const right = document.getElementById("photo_right").files[0];
-    const back = document.getElementById("photo_back").files[0];
-
-    const frontUrl = await uploadFile(front, "front");
-    const leftUrl = await uploadFile(left, "left");
-    const rightUrl = await uploadFile(right, "right");
-    const backUrl = await uploadFile(back, "back");
-
-    const { error } = await supabase.from("cases").insert({
-      part,
-      concern,
-      goal,
-      change_level: changeLevel,
-      photos_front: frontUrl,
-      photos_left: leftUrl,
-      photos_right: rightUrl,
-      photos_back: backUrl,
-      status: "new",
-      messages: [],
-    });
-
-    document.getElementById("loadingText").style.display = "none";
-
-    if (error) {
-      alert("제출 중 오류! 다시 시도해줘 🙏");
-      console.error(error);
-      return;
     }
 
-    alert("상담 신청이 완료되었어! 최대한 빨리 확인해볼게 👍");
-  }
-</script>
+    async function sendConsult() {
+      document.getElementById("loadingText").style.display = "block";
+
+      const part = document.getElementById("part").value;
+      const concern = document.getElementById("concern").value;
+      const goal = document.getElementById("goal").value;
+      const changeLevel = document.getElementById("changeLevel").value;
+
+      const front = document.getElementById("photo_front").files[0];
+      const left = document.getElementById("photo_left").files[0];
+      const right = document.getElementById("photo_right").files[0];
+      const back = document.getElementById("photo_back").files[0];
+
+      const frontUrl = await uploadToSupabase(front, "front");
+      const leftUrl = await uploadToSupabase(left, "left");
+      const rightUrl = await uploadToSupabase(right, "right");
+      const backUrl = await uploadToSupabase(back, "back");
+
+      const { error } = await supabaseClient.from("cases").insert({
+        part,
+        concern,
+        goal,
+        change_level: changeLevel,
+        photos_front: frontUrl,
+        photos_left: leftUrl,
+        photos_right: rightUrl,
+        photos_back: backUrl,
+        status: "new",
+        messages: []
+      });
+
+      document.getElementById("loadingText").style.display = "none";
+
+      if (error) {
+        alert("저장 중 오류가 발생했어. 다시 시도해줘!");
+        console.log(error);
+        return;
+      }
+
+      alert("상담이 정상적으로 접수됐어! 조금만 기다려줘 🙏");
+    }
+  </script>
+
+</body>
+</html>
