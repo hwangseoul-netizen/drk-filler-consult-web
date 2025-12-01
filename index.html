@@ -10,26 +10,27 @@
 
   <style>
     :root {
-      --bg: #0b1020;
-      --bg-soft: #111827;
-      --card: #111827;
-      --card-soft: #151b2c;
-      --text-main: #f9fafb;
-      --text-sub: #9ca3af;
-      --accent: #f97373;
-      --accent-soft: #fecaca;
-      --pill-bg: #020617;
-      --border-soft: #1f2937;
-      --border-strong: #374151;
-      --doctor-pill: #f9fafb;
-      --doctor-pill-text: #020617;
-      --user-pill: #111827;
+      --bg: #f5f5fa;
+      --bg-soft: #eef2ff;
+      --card: #ffffff;
+      --card-soft: #f3f4ff;
+      --text-main: #111827;
+      --text-sub: #6b7280;
+      --accent: #fb3795;
+      --accent-soft: #fee2f5;
+      --pill-bg: #e5e7eb;
+      --border-soft: #e5e7eb;
+      --border-strong: #d1d5db;
+      --doctor-pill: #111827;
+      --doctor-pill-text: #f9fafb;
+      --user-pill: #ffffff;
       --bad: #f97373;
-      --good: #22c55e;
-      --chip-bg: #111827;
-      --chip-border: #374151;
-      --chip-text: #9ca3af;
+      --good: #16a34a;
+      --chip-bg: #f3f4f6;
+      --chip-border: #e5e7eb;
+      --chip-text: #6b7280;
       --btn-pink: #fb3795;
+      --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.10);
     }
 
     * {
@@ -38,15 +39,18 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle at top, #111827 0, #020617 55%);
+      background:
+        radial-gradient(circle at top left, #e0f2fe 0, transparent 45%),
+        radial-gradient(circle at top right, #fee2f2 0, transparent 40%),
+        var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       color: var(--text-main);
     }
 
     .app {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 16px 16px 120px;
+      padding: 18px 16px 120px;
     }
 
     /* HEADER */
@@ -54,12 +58,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #020617, #111827 55%, #020617);
-      border: 1px solid var(--border-soft);
+      gap: 16px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(229,231,235,0.9);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px);
     }
 
     .hdr-left {
@@ -72,20 +78,20 @@
     .avatar {
       width: 40px;
       height: 40px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #f9fafb 0, #fb3795 40%, #020617 85%);
+      border-radius: 99px;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, #fb3795 45%, #9f1239 80%);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 2px solid rgba(248, 250, 252, 0.85);
-      box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.9);
+      border: 2px solid #f9fafb;
+      box-shadow: 0 0 0 3px rgba(251, 55, 149, 0.15);
     }
 
     .avatar span {
       font-weight: 800;
       font-size: 20px;
-      color: #0b1020;
+      color: #111827;
     }
 
     .hdr-text {
@@ -114,7 +120,7 @@
       padding: 4px;
       border-radius: 999px;
       background: var(--pill-bg);
-      border: 1px solid var(--border-strong);
+      border: 1px solid rgba(209,213,219,0.9);
       flex-shrink: 0;
     }
 
@@ -124,52 +130,53 @@
       background: transparent;
       color: var(--text-sub);
       font-size: 12px;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       cursor: pointer;
       font-weight: 600;
       white-space: nowrap;
+      transition: all 0.18s ease-out;
     }
 
     .mode-btn.active-user {
       background: var(--user-pill);
-      color: #e5e7eb;
+      color: #111827;
+      box-shadow: 0 8px 14px rgba(148,163,184,0.25);
     }
 
     .mode-btn.active-doctor {
       background: var(--doctor-pill);
       color: var(--doctor-pill-text);
+      box-shadow: 0 8px 14px rgba(15,23,42,0.45);
     }
 
     @media (max-width: 640px) {
       header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
       }
       .mode-toggle {
-        align-self: stretch;
+        width: 100%;
         justify-content: space-between;
-      }
-      .hdr-title {
-        font-size: 17px;
       }
     }
 
     /* HERO */
     .hero {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       padding: 18px 16px;
-      border-radius: 18px;
-      background: radial-gradient(circle at top left, rgba(251, 55, 149, 0.2), transparent 55%),
-        radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 50%),
-        #020617;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, #ffffff 0, #fdf2ff 40%, #eff6ff 100%);
+      border: 1px solid rgba(229,231,235,0.9);
+      box-shadow: 0 18px 30px rgba(148,163,184,0.25);
     }
 
     .hero-title {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 900;
       margin-bottom: 6px;
+      letter-spacing: -0.02em;
     }
 
     .hero-desc {
@@ -183,9 +190,9 @@
       background: var(--card);
       border-radius: 18px;
       border: 1px solid var(--border-soft);
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.45);
+      padding: 16px 16px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 22px rgba(148,163,184,0.25);
     }
 
     .card-soft {
@@ -201,6 +208,7 @@
       font-size: 15px;
       font-weight: 700;
       margin-bottom: 6px;
+      letter-spacing: -0.01em;
     }
 
     label {
@@ -210,16 +218,21 @@
       margin-bottom: 4px;
     }
 
-    textarea, select, input[type="file"], input[type="password"], input[type="text"] {
+    textarea,
+    select,
+    input[type="file"],
+    input[type="password"],
+    input[type="text"] {
       width: 100%;
       border-radius: 12px;
       border: 1px solid var(--border-strong);
-      background: #020617;
+      background: #f9fafb;
       color: var(--text-main);
       padding: 10px 12px;
       font-family: inherit;
       font-size: 13px;
       outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     textarea {
@@ -229,18 +242,28 @@
 
     select {
       cursor: pointer;
+      background-color: #f9fafb;
+    }
+
+    textarea:focus,
+    select:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(251,55,149,0.3);
+      background: #ffffff;
     }
 
     .file-row {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     .file-input {
       font-size: 12px;
-      background: #020617;
+      background: #f9fafb;
       color: var(--text-sub);
     }
 
@@ -252,17 +275,26 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 10px;
+      transition: transform 0.08s ease-out, box-shadow 0.12s ease-out, opacity 0.15s;
     }
 
     .btn-pink {
-      background: var(--btn-pink);
-      color: #0f172a;
+      background: linear-gradient(135deg, #fb3795, #f97373);
+      color: #ffffff;
+      box-shadow: 0 16px 30px rgba(249, 115, 129, 0.6);
+    }
+
+    .btn-pink:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 10px 18px rgba(248, 113, 113, 0.55);
     }
 
     .btn-disabled {
       opacity: 0.5;
       cursor: default;
+      box-shadow: none;
+      transform: none;
     }
 
     .status-text {
@@ -279,11 +311,25 @@
       color: var(--bad);
     }
 
-    /* DOCTOR MODE */
+    footer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    /* DOCTOR MODE 레이아웃 */
+    .doctor-tagline {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
     .doctor-login-row {
       display: flex;
       gap: 8px;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .doctor-login-row input {
@@ -292,13 +338,20 @@
 
     .doctor-login-row button {
       border-radius: 12px;
-      background: #1f2937;
-      color: var(--text-main);
-      border: 1px solid var(--border-strong);
-      padding: 8px 12px;
+      background: #111827;
+      color: #f9fafb;
+      border: none;
+      padding: 8px 14px;
       font-size: 13px;
       cursor: pointer;
       white-space: nowrap;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.35);
+      transition: transform 0.08s ease-out, box-shadow 0.12s ease-out;
+    }
+
+    .doctor-login-row button:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 5px 10px rgba(15,23,42,0.25);
     }
 
     @media (max-width: 640px) {
@@ -310,18 +363,39 @@
       }
     }
 
+    .doctor-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .doctor-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     .case-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      max-height: 450px;
+      overflow-y: auto;
     }
 
     .case-item {
       padding: 10px 12px;
       border-radius: 12px;
-      background: #020617;
+      background: #f9fafb;
       border: 1px solid var(--border-soft);
       cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
+    }
+
+    .case-item:hover {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      transform: translateY(-1px);
     }
 
     .case-item-header {
@@ -335,6 +409,7 @@
     .case-part {
       font-size: 13px;
       font-weight: 700;
+      letter-spacing: -0.01em;
     }
 
     .case-status {
@@ -343,6 +418,13 @@
       border-radius: 999px;
       border: 1px solid var(--border-strong);
       color: var(--text-sub);
+      background: #f9fafb;
+    }
+
+    .case-status.answered {
+      border-color: #bbf7d0;
+      background: #dcfce7;
+      color: #166534;
     }
 
     .case-created {
@@ -351,9 +433,30 @@
     }
 
     .case-detail {
-      margin-top: 12px;
+      margin-top: 6px;
       padding-top: 10px;
       border-top: 1px dashed var(--border-soft);
+      font-size: 13px;
+    }
+
+    .case-detail h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      gap: 4px 10px;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .detail-value {
       font-size: 13px;
     }
 
@@ -361,42 +464,44 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 8px 0;
+      margin: 10px 0 4px;
     }
 
     .photos-row img {
-      width: 90px;
-      height: 90px;
+      width: 92px;
+      height: 92px;
       object-fit: cover;
       border-radius: 10px;
       border: 1px solid var(--border-soft);
+      box-shadow: 0 8px 16px rgba(148,163,184,0.35);
+    }
+
+    .photos-caption {
+      font-size: 10px;
+      color: var(--text-sub);
+      text-align: center;
+      margin-top: 2px;
     }
 
     .reply-box {
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .reply-box textarea {
-      min-height: 80px;
+      min-height: 90px;
+      background: #f9fafb;
     }
 
     .small-chip {
       display: inline-block;
       font-size: 11px;
-      padding: 3px 7px;
+      padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid var(--chip-border);
       background: var(--chip-bg);
       color: var(--chip-text);
       margin-right: 4px;
       margin-bottom: 4px;
-    }
-
-    footer {
-      margin-top: 18px;
-      font-size: 11px;
-      color: var(--text-sub);
-      text-align: center;
     }
 
   </style>
@@ -454,8 +559,7 @@
       <div class="card">
         <div class="section-title">4단계 · 본인 사진 업로드 (정면 / 좌45 / 우45 / 후면)</div>
         <p style="font-size:12px;color:var(--text-sub);margin-bottom:8px;">
-          지금은 테스트 버전이라, 파일을 업로드하면 Supabase 스토리지에 안전하게 저장돼.<br />
-          필요하면 나중에 바로 지울 수도 있어.
+          파일은 Supabase 스토리지에 암호화된 URL로 저장돼. 필요하면 언제든 삭제 가능해.
         </p>
 
         <div class="file-row">
@@ -483,23 +587,23 @@
       </div>
 
       <footer>
-        * 아직은 데모 버전이라, 정확한 진단·진료가 아닌 방향 잡기용 코멘트야.
+        * 데모 버전으로, 실제 진단·진료가 아닌 방향 제안용 코멘트입니다.
       </footer>
     </section>
 
     <!-- 닥터 모드 -->
     <section id="doctor-section" style="display:none;">
-      <div class="hero" style="margin-top:0;margin-bottom:18px;">
+      <section class="hero" style="margin-top:0;margin-bottom:16px;">
         <div class="hero-title">닥터케이 대기함</div>
-        <p class="hero-desc">
-          전국에서 올라오는 “이거 필러로 돼요?” 케이스들이야.<br />
-          실시간 채팅이 아니라, 차트 보듯이 하나씩 열어서 답변 남기는 구조라고 생각하면 돼.
+        <p class="doctor-tagline">
+          전국에서 올라오는 “이거 필러로 돼요?” 케이스를 차트처럼 한눈에 보는 화면이야.<br />
+          하나씩 열어서, 필러 가능 여부 · 예상 볼륨 · 난이도를 정리해서 남겨줘.
         </p>
-      </div>
+      </section>
 
       <div id="doctor-login-card" class="card">
         <div class="section-title">닥터 전용 로그인</div>
-        <p style="font-size:13px;color:var(--text-sub);margin-bottom:6px;">
+        <p style="font-size:13px;color:var(--text-sub);margin-bottom:4px;">
           브라우저 기준으로 한 번 로그인하면 다시 비밀번호를 묻지 않아.
         </p>
         <div class="doctor-login-row">
@@ -510,18 +614,22 @@
       </div>
 
       <div id="doctor-main" style="display:none;">
-        <div class="card">
-          <div class="section-title">닥터케이 대기함</div>
-          <p style="font-size:12px;color:var(--text-sub);margin-bottom:6px;">
-            ↓ 접수된 케이스가 시간순으로 정렬돼. 클릭하면 상세가 열려.
-          </p>
-          <div id="case-list" class="case-list"></div>
-          <div id="case-list-empty" class="status-text">아직 접수된 케이스가 없어.</div>
-        </div>
+        <div class="doctor-layout">
+          <!-- 좌측 : 리스트 -->
+          <div class="card">
+            <div class="section-title">대기 중 케이스</div>
+            <p style="font-size:12px;color:var(--text-sub);margin-bottom:6px;">
+              최근 접수 순으로 정렬돼 있어. 한 번 클릭하면 오른쪽 상세 차트가 열려.
+            </p>
+            <div id="case-list" class="case-list"></div>
+            <div id="case-list-empty" class="status-text">아직 접수된 케이스가 없어.</div>
+          </div>
 
-        <div id="case-detail-card" class="card" style="display:none;">
-          <div class="section-title">선택된 케이스</div>
-          <div id="case-detail" class="case-detail"></div>
+          <!-- 우측 : 상세 차트 -->
+          <div id="case-detail-card" class="card" style="display:none;">
+            <div class="section-title">케이스 차트</div>
+            <div id="case-detail" class="case-detail"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -746,6 +854,9 @@
         const statusSpan = document.createElement("div");
         statusSpan.className = "case-status";
         statusSpan.textContent = row.status || "new";
+        if ((row.status || "").toLowerCase() === "answered") {
+          statusSpan.classList.add("answered");
+        }
 
         header.appendChild(partSpan);
         header.appendChild(statusSpan);
@@ -753,9 +864,7 @@
         const created = document.createElement("div");
         created.className = "case-created";
         const dt = row.created_at ? new Date(row.created_at) : null;
-        created.textContent = dt
-          ? dt.toLocaleString("ko-KR")
-          : "";
+        created.textContent = dt ? dt.toLocaleString("ko-KR") : "";
 
         item.appendChild(header);
         item.appendChild(created);
@@ -768,23 +877,27 @@
     function openCase(row) {
       selectedCase = row;
       caseDetailCard.style.display = "";
-      const lines = [];
+      const parts = [];
 
-      if (row.part) {
-        lines.push(`<div><span class="small-chip">부위</span> ${escapeHtml(row.part)}</div>`);
-      }
-      if (row.concern) {
-        lines.push(`<div style="margin-top:4px;"><span class="small-chip">고민</span> ${escapeHtml(row.concern)}</div>`);
-      }
-      if (row.goal) {
-        lines.push(`<div style="margin-top:4px;"><span class="small-chip">목표</span> ${escapeHtml(row.goal)}</div>`);
-      }
-      if (row.change_level) {
-        lines.push(`<div style="margin-top:4px;"><span class="small-chip">강도</span> ${escapeHtml(row.change_level)}</div>`);
-      }
-      if (row.refnote) {
-        lines.push(`<div style="margin-top:4px;"><span class="small-chip">참고메모</span> ${escapeHtml(row.refnote)}</div>`);
-      }
+      parts.push("<h4>기본 정보</h4>");
+      parts.push('<div class="detail-grid">');
+
+      parts.push('<div class="detail-label">부위</div>');
+      parts.push('<div class="detail-value">' + (escapeHtml(row.part) || "-") + "</div>");
+
+      parts.push('<div class="detail-label">고민</div>');
+      parts.push('<div class="detail-value">' + (escapeHtml(row.concern) || "-") + "</div>");
+
+      parts.push('<div class="detail-label">목표</div>');
+      parts.push('<div class="detail-value">' + (escapeHtml(row.goal) || "-") + "</div>");
+
+      parts.push('<div class="detail-label">강도</div>');
+      parts.push('<div class="detail-value">' + (escapeHtml(row.change_level) || "-") + "</div>");
+
+      parts.push('<div class="detail-label">참고메모</div>');
+      parts.push('<div class="detail-value">' + (escapeHtml(row.refnote) || "-") + "</div>");
+
+      parts.push("</div>");
 
       // 사진들
       const photos = [];
@@ -794,26 +907,30 @@
       if (row.photos_back) photos.push({ label: "후면", url: row.photos_back });
 
       if (photos.length) {
-        let html = `<div style="margin-top:8px;"><span class="small-chip">사진</span></div><div class="photos-row">`;
+        let html = `<div style="margin-top:10px;"><span class="small-chip">사진</span></div><div class="photos-row">`;
         photos.forEach((p) => {
-          html += `<div><img src="${p.url}" alt="${p.label}" /><div style="font-size:10px;color:#9ca3af;margin-top:2px;text-align:center;">${p.label}</div></div>`;
+          html += `
+            <div>
+              <img src="${p.url}" alt="${p.label}" />
+              <div class="photos-caption">${p.label}</div>
+            </div>`;
         });
         html += "</div>";
-        lines.push(html);
+        parts.push(html);
       }
 
-      // 닥터 답변 박스
+      // 답변 박스
       const reply = row.doctor_reply || "";
-      lines.push(`
+      parts.push(`
         <div class="reply-box">
-          <label>닥터케이 답변</label>
-          <textarea id="doctor-reply-text">${escapeHtml(reply)}</textarea>
-          <button id="btn-save-reply" class="btn" style="margin-top:8px;background:#1d4ed8;color:#f9fafb;font-size:14px;">답변 저장</button>
+          <h4>닥터케이 답변</h4>
+          <textarea id="doctor-reply-text" placeholder="예: 필러로 어느 정도까지 가능한지, 필요한 cc 범위, 난이도/주의점 등 정리해서 적어줘.">${escapeHtml(reply)}</textarea>
+          <button id="btn-save-reply" class="btn" style="margin-top:10px;background:#111827;color:#f9fafb;box-shadow:0 14px 28px rgba(15,23,42,0.4);font-size:14px;">답변 저장</button>
           <div id="doctor-reply-status" class="status-text"></div>
         </div>
       `);
 
-      caseDetail.innerHTML = lines.join("");
+      caseDetail.innerHTML = parts.join("");
 
       const saveBtn = document.getElementById("btn-save-reply");
       const replyStatus = document.getElementById("doctor-reply-status");
@@ -838,7 +955,6 @@
         } else {
           replyStatus.textContent = "저장 완료!";
           replyStatus.className = "status-text ok";
-          // 상태 뱃지도 새로 고침
           loadCases();
         }
 
