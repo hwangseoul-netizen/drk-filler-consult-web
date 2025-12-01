@@ -1,1248 +1,1206 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <title>닥터케이 필러 상담</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <title>닥터케이 필러 상담</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <style>
-      :root {
-        --bg: #f5f5f7;
-        --card: #ffffff;
-        --primary: #ff4f7d;
-        --primary-soft: #ffe4ec;
-        --border: #e5e5ea;
-        --border-soft: #e5e7eb;
-        --text-main: #111827;
-        --text-sub: #6b7280;
-        --danger: #ef4444;
-        --success: #16a34a;
-      }
+  <!-- 폰트 & 기본 스타일 -->
+  <style>
+    :root {
+      --bg: #f5f5f8;
+      --card: #ffffff;
+      --card-soft: #fafafa;
+      --primary: #ff4b8b;
+      --primary-soft: #ffe4ee;
+      --text-main: #111827;
+      --text-sub: #6b7280;
+      --border-soft: #e5e7eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+    }
 
-      * {
-        box-sizing: border-box;
-      }
+    * {
+      box-sizing: border-box;
+    }
 
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text-main);
-      }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
 
-      .app {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 16px;
-      }
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 16px 80px;
+    }
 
-      /* HEADER */
+    /* 헤더 카드 */
 
-      .app-header {
-        background: var(--card);
-        border-radius: 18px;
-        padding: 16px 16px 14px;
-        border: 1px solid var(--border-soft);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+    .top-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 16px 18px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
 
-      .header-top {
-        display: flex;
+    @media (min-width: 680px) {
+      .top-card {
+        flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
       }
+    }
 
-      .doc-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+    .doc-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffd1e0, #ff4b8b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .titles {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .titles-main {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .titles-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .headline {
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .headline-small {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+
+    .headline-small b {
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* 모드 토글 */
+
+    .mode-toggle-wrap {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      background: var(--card-soft);
+      border-radius: 999px;
+      padding: 4px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .mode-btn {
+      border: none;
+      outline: none;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: transparent;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* 공통 카드 / 섹션 */
+
+    .section-card {
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .section-caption {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 8px 0 4px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    textarea,
+    select,
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      padding: 10px 12px;
+      font-size: 13px;
+      outline: none;
+      resize: vertical;
+      min-height: 42px;
+      background: var(--card-soft);
+    }
+
+    textarea:focus,
+    select:focus,
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 70px;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media (min-width: 720px) {
+      .row.two {
+        flex-direction: row;
       }
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-weight: 800;
-        font-size: 18px;
-      }
-
-      .title-area h1 {
-        font-size: 18px;
-        margin: 0 0 2px;
-        font-weight: 800;
-      }
-
-      .title-area p {
-        margin: 0;
-        font-size: 12px;
-        color: var(--text-sub);
-      }
-
-      .mode-toggle {
-        background: #f2f2f7;
-        border-radius: 999px;
-        padding: 3px;
-        display: inline-flex;
-      }
-
-      .mode-btn {
-        border: none;
-        background: transparent;
-        padding: 6px 14px;
-        border-radius: 999px;
-        font-size: 13px;
-        color: var(--text-sub);
-        cursor: pointer;
-      }
-
-      .mode-btn.active {
-        background: #ffffff;
-        color: var(--primary);
-        font-weight: 700;
-        box-shadow: 0 0 0 1px var(--border);
-      }
-
-      .header-bottom {
-        font-size: 13px;
-        color: var(--text-sub);
-        line-height: 1.5;
-      }
-
-      .header-bottom strong {
-        color: var(--text-main);
-      }
-
-      /* LAYOUT */
-
-      .main {
-        margin-top: 16px;
-        margin-bottom: 80px;
-      }
-
-      .card {
-        background: var(--card);
-        border-radius: 18px;
-        padding: 16px;
-        border: 1px solid var(--border-soft);
-        margin-bottom: 14px;
-      }
-
-      .card-title {
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-
-      .card-sub {
-        font-size: 12px;
-        color: var(--text-sub);
-        margin-bottom: 12px;
-      }
-
-      .step-label {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-
-      .step-caption {
-        font-size: 12px;
-        color: var(--text-sub);
-        margin-bottom: 8px;
-      }
-
-      .field {
-        margin-bottom: 12px;
-      }
-
-      .field label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      .field small {
-        display: block;
-        font-size: 11px;
-        color: var(--text-sub);
-        margin-top: 2px;
-      }
-
-      textarea,
-      input[type="text"],
-      select {
-        width: 100%;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        padding: 10px 12px;
-        font-size: 13px;
-        font-family: inherit;
-        resize: vertical;
-        min-height: 40px;
-        background: #fafafa;
-        color: var(--text-main);
-      }
-
-      textarea::placeholder,
-      input::placeholder {
-        color: #9ca3af;
-      }
-
-      input[type="file"] {
-        width: 100%;
-        font-size: 12px;
-      }
-
-      .photo-row {
-        margin-bottom: 10px;
-      }
-
-      .photo-row label {
-        font-size: 13px;
-        font-weight: 600;
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      .helper {
-        font-size: 11px;
-        color: var(--text-sub);
-      }
-
-      .btn-primary {
-        width: 100%;
-        border-radius: 999px;
-        border: none;
-        background: var(--primary);
-        color: #fff;
-        font-weight: 700;
-        padding: 12px;
-        font-size: 15px;
-        cursor: pointer;
-      }
-
-      .btn-primary:disabled {
-        background: #e5e7eb;
-        color: #9ca3af;
-        cursor: default;
-      }
-
-      .status-text {
-        margin-top: 8px;
-        font-size: 12px;
-        color: var(--text-sub);
-      }
-
-      .status-text.ok {
-        color: var(--success);
-      }
-
-      .status-text.err {
-        color: var(--danger);
-      }
-
-      /* DOCTOR MODE */
-
-      .doctor-header {
-        font-size: 14px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .doctor-header span {
-        color: var(--text-sub);
-        font-size: 12px;
-      }
-
-      .case-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 12px;
-        max-height: 260px;
-        overflow-y: auto;
-      }
-
-      .case-item {
-        border-radius: 12px;
-        border: 1px solid var(--border-soft);
-        padding: 10px 12px;
-        background: #f9fafb;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .case-item-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-      }
-
-      .case-item-part {
-        font-weight: 600;
-      }
-
-      .case-item-date {
-        font-size: 11px;
-        color: var(--text-sub);
-      }
-
-      .case-item-concern {
-        font-size: 12px;
-        color: var(--text-sub);
-      }
-
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        border: 1px solid transparent;
-      }
-
-      .badge-new {
-        background: var(--primary-soft);
-        color: var(--primary);
-        border-color: var(--primary-soft);
-      }
-
-      .badge-done {
-        background: #dcfce7;
-        color: #166534;
-        border-color: #bbf7d0;
-      }
-
-      .doctor-detail {
-        margin-top: 6px;
-      }
-
-      .subsection-title {
-        font-size: 13px;
-        font-weight: 700;
-        margin: 10px 0 4px;
-      }
-
-      .readonly {
-        font-size: 13px;
-        background: #f9fafb;
-        border-radius: 10px;
-        border: 1px solid var(--border-soft);
-        padding: 10px 12px;
-        white-space: pre-wrap;
-      }
-
-      .photo-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 4px;
-      }
-
-      .photo-links a {
-        font-size: 12px;
-        color: var(--primary);
-        text-decoration: none;
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: #f9fafb;
-        border: 1px solid var(--border-soft);
-      }
-
-      .reply-history {
-        max-height: 140px;
-        overflow-y: auto;
-        margin-bottom: 6px;
-      }
-
-      .reply-item {
-        font-size: 12px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        background: #f9fafb;
-        border: 1px solid var(--border-soft);
-        margin-bottom: 4px;
-      }
-
-      .reply-item time {
-        display: block;
-        font-size: 10px;
-        color: var(--text-sub);
-      }
-
-      .btn-small {
-        border-radius: 999px;
-        border: none;
-        padding: 8px 12px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .btn-outline {
-        background: #ffffff;
-        border: 1px solid var(--border);
-        color: var(--text-main);
-      }
-
-      .btn-save {
-        background: var(--primary);
-        color: #ffffff;
-        border: none;
-      }
-
-      .btn-row {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 8px;
-      }
-
-      /* MODAL (PIN) */
-
-      .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 50;
-      }
-
-      .modal {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 16px 18px 14px;
-        width: 90%;
-        max-width: 360px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-      }
-
-      .modal-title {
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-
-      .modal-text {
-        font-size: 12px;
-        color: var(--text-sub);
-        margin-bottom: 10px;
-      }
-
-      .pin-input-row {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-
-      .pin-input-row input {
+      .row.two .col {
         flex: 1;
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-size: 14px;
-        text-align: center;
       }
+    }
 
-      .modal-btn-row {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 4px;
-      }
+    /* 파일 업로드 */
 
-      .btn-cancel {
-        background: #f3f4f6;
-        border-radius: 999px;
-        border: none;
-        font-size: 13px;
-        padding: 8px 12px;
-        cursor: pointer;
-      }
+    .file-row {
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
 
-      .btn-confirm {
-        background: var(--primary);
-        color: #fff;
-        border-radius: 999px;
-        border: none;
-        font-size: 13px;
-        padding: 8px 14px;
-        cursor: pointer;
-      }
+    .file-row input[type="file"] {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+    }
 
-      .modal-error {
-        font-size: 11px;
-        color: var(--danger);
-        min-height: 14px;
-      }
+    .note {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
 
-      @media (min-width: 768px) {
-        .app-header {
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .header-bottom {
-          max-width: 520px;
-        }
+    /* 버튼 */
+
+    .primary-btn {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 14px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-status-new {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-status-answered {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-status-closed {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    /* 닥터 모드 */
+
+    .hidden {
+      display: none;
+    }
+
+    .doctor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .doctor-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .doctor-controls select {
+      width: auto;
+      min-width: 120px;
+    }
+
+    .small-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--card-soft);
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .doctor-list-empty {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .case-card {
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: var(--card-soft);
+      cursor: pointer;
+    }
+
+    .case-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      gap: 4px;
+    }
+
+    .case-card-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .case-card-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .case-card-body {
+      font-size: 12px;
+      color: var(--text-main);
+      margin-top: 4px;
+    }
+
+    /* 모달 공통 */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 18px 16px 14px;
+      max-width: 420px;
+      width: calc(100% - 32px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .modal-text {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--card-soft);
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-solid {
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pin-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pin-input-row input {
+      flex: 1;
+      text-align: center;
+      letter-spacing: 3px;
+    }
+
+    .error-text {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+
+    .success-text {
+      font-size: 12px;
+      color: var(--success);
+      margin-top: 4px;
+    }
+
+    /* 닥터 상세 모달 */
+
+    .detail-modal {
+      max-width: 640px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    @media (min-width: 720px) {
+      .detail-grid {
+        grid-template-columns: 1.1fr 1fr;
       }
-    </style>
-  </head>
-  <body>
-    <div class="app">
-      <!-- HEADER -->
-      <header class="app-header">
-        <div class="header-top">
-          <div class="doc-info">
-            <div class="avatar">K</div>
-            <div class="title-area">
-              <h1>닥터케이 필러 상담</h1>
-              <p>전신 필러 전문 온라인 프리 상담</p>
-            </div>
+    }
+
+    .detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+    }
+
+    .detail-box {
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      padding: 8px 10px;
+      background: var(--card-soft);
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .photo-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .photo-links a {
+      font-size: 12px;
+      color: var(--primary);
+      text-decoration: none;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 8px;
+      background: #fff;
+    }
+
+    .doctor-answer-area {
+      margin-top: 10px;
+    }
+
+    .doctor-answer-area textarea {
+      min-height: 90px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      z-index: 50;
+    }
+  </style>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- 헤더 -->
+    <div class="top-card">
+      <div class="doc-left">
+        <div class="avatar">K</div>
+        <div class="titles">
+          <div class="titles-main">닥터케이 필러 상담</div>
+          <div class="titles-sub">전신 필러 전문 온라인 프리 상담</div>
+          <div class="headline">“이거 필러로 돼요? 얼마나 넣어야 해요?”</div>
+          <div class="headline-small">
+            전신을 필러로 다뤄온 닥터케이가 온라인에서 방향을 잡아주는 상담입니다.<br />
+            실시간 채팅은 아니지만, <b>탑 티어 답변을 원한다면 조금만 기다려주세요!</b>
           </div>
-          <div class="mode-toggle" id="modeToggle">
-            <button
-              type="button"
-              class="mode-btn active"
-              id="userModeBtn"
-            >
-              사용자 모드
-            </button>
-            <button type="button" class="mode-btn" id="doctorModeBtn">
-              닥터 모드
-            </button>
-          </div>
         </div>
-        <div class="header-bottom" id="headerDesc">
-          <strong>“이거 필러로 돼요? 얼마나 넣어야 해요?”</strong><br />
-          전신을 필러로 다뤄온 닥터케이가 온라인에서 방향을 잡아주는
-          상담입니다.<br />
-          실시간 채팅은 아니지만, <strong>탑 티어 답변을 원한다면 조금만
-          기다려주세요!</strong>
-        </div>
-      </header>
-
-      <!-- MAIN -->
-      <main class="main">
-        <!-- USER MODE -->
-        <section id="userSection">
-          <!-- STEP 1 -->
-          <div class="card">
-            <div class="card-title">1단계 · 어디가 제일 고민이야?</div>
-            <div class="card-sub">관심 부위 / 키워드 + 지금 제일 고민되는 부분</div>
-
-            <form id="consultForm">
-              <div class="field">
-                <label>관심 부위 / 키워드</label>
-                <textarea
-                  id="fieldPart"
-                  placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등"
-                ></textarea>
-              </div>
-
-              <div class="field">
-                <label>지금 제일 고민되는 부분</label>
-                <textarea
-                  id="fieldConcern"
-                  placeholder="예: 골반이 너무 얇아서 라인이 없어요 등"
-                ></textarea>
-              </div>
-
-              <!-- STEP 2 -->
-              <div class="step-label">2단계 · 바뀌었으면 하는 느낌/이미지</div>
-              <div class="step-caption">
-                원하는 분위기 / 이미지, 본인이 생각하는 목표 느낌을 적어줘.
-              </div>
-
-              <div class="field">
-                <label>원하는 느낌 / 목표</label>
-                <textarea
-                  id="fieldGoal"
-                  placeholder="예: 자연스럽게 골반 라운드 볼륨 / 손등은 나이티만 줄어든 정도 등"
-                ></textarea>
-              </div>
-
-              <div class="field">
-                <label>어느 정도까지 바꾸고 싶어?</label>
-                <select id="fieldChangeLevel">
-                  <option value="">선택</option>
-                  <option value="standard">
-                    표준 (주변에서 &ldquo;예뻐졌네?&rdquo; 하는 정도)
-                  </option>
-                  <option value="strong">
-                    확실한 변화 (사진에서 바로 보이는 정도)
-                  </option>
-                  <option value="image-change">
-                    이미지 체인지 (완전 다른 느낌)
-                  </option>
-                </select>
-              </div>
-
-              <!-- STEP 3 -->
-              <div class="step-label">3단계 · 참고 이미지 & 메모</div>
-              <div class="step-caption">
-                다른 병원 전후, 셀카, 보정 이미지 등 뭐든 좋아. 편하게 올려줘.
-              </div>
-
-              <div class="field">
-                <label>참고 전후/이미지 메모</label>
-                <textarea
-                  id="fieldRefNote"
-                  placeholder="예: 인스타에서 본 전후 느낌 / 본인이 보정한 후사진 설명 등"
-                ></textarea>
-              </div>
-
-              <div class="field">
-                <label>사진 업로드 (정면 / 좌45° / 우45° / 후면)</label>
-                <small class="helper">
-                  지금은 테스트로 최대 4장까지 업로드 가능해. 얼굴/바디 모두 가능하고,
-                  민감하면 얼굴은 가려도 돼.
-                </small>
-
-                <div class="photo-row">
-                  <label>정면</label>
-                  <input type="file" id="photoFront" accept="image/*" />
-                </div>
-                <div class="photo-row">
-                  <label>좌 45°</label>
-                  <input type="file" id="photoLeft" accept="image/*" />
-                </div>
-                <div class="photo-row">
-                  <label>우 45°</label>
-                  <input type="file" id="photoRight" accept="image/*" />
-                </div>
-                <div class="photo-row">
-                  <label>후면</label>
-                  <input type="file" id="photoBack" accept="image/*" />
-                </div>
-              </div>
-
-              <button type="submit" class="btn-primary" id="submitBtn">
-                상담 보내기
-              </button>
-              <div class="status-text" id="userStatus">
-                업로드는 Wi-Fi 기준으로 수 초 정도 걸릴 수 있어요. 창 닫지 말고
-                잠깐만 기다려주세요.
-              </div>
-            </form>
-          </div>
-        </section>
-
-        <!-- DOCTOR MODE -->
-        <section id="doctorSection" style="display: none">
-          <div class="card">
-            <div class="doctor-header">
-              <div>
-                <div class="card-title">닥터케이 대기함</div>
-                <span>전국에서 올라온 &ldquo;이거 필러로 돼요?&rdquo; 케이스들을 보는
-                  차트 뷰야.</span>
-              </div>
-              <button type="button" class="btn-small btn-outline" id="reloadBtn">
-                새로고침
-              </button>
-            </div>
-
-            <div class="case-list" id="caseList">
-              <!-- 케이스 목록 -->
-            </div>
-
-            <div class="doctor-detail" id="doctorDetail" style="display: none">
-              <div class="subsection-title">선택된 케이스</div>
-              <div class="readonly" id="detailInfo"></div>
-
-              <div class="subsection-title">업로드된 사진</div>
-              <div class="photo-links" id="detailPhotos"></div>
-
-              <div class="subsection-title">닥터케이 답변 히스토리</div>
-              <div class="reply-history" id="replyHistory"></div>
-
-              <div class="subsection-title">새 답변 메모</div>
-              <textarea
-                id="replyInput"
-                placeholder="예: 필러로 가능한 방향 / 예상 난이도 / 권장 용량 범위 / 주의점 등을 솔직하게 적어줘."
-              ></textarea>
-
-              <div class="btn-row">
-                <button type="button" class="btn-small btn-outline" id="clearReplyBtn">
-                  입력 취소
-                </button>
-                <button type="button" class="btn-small btn-save" id="saveReplyBtn">
-                  답변 저장
-                </button>
-              </div>
-
-              <div class="status-text" id="doctorStatus"></div>
-            </div>
-
-            <div id="doctorEmptyInfo" class="status-text">
-              아직 불러온 케이스가 없어요. 상단의 새로고침을 눌러 불러와줘.
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- PIN MODAL -->
-    <div class="modal-backdrop" id="pinModalBackdrop">
-      <div class="modal">
-        <div class="modal-title" id="pinModalTitle">닥터 모드 PIN 설정</div>
-        <div class="modal-text" id="pinModalText">
-          처음 한 번만 6자리 숫자로 PIN을 만들어줘. 이 브라우저에서만 기억할게.
-        </div>
-
-        <div class="pin-input-row" id="pinSetupRow">
-          <input
-            type="password"
-            inputmode="numeric"
-            maxlength="6"
-            id="pinNew"
-            placeholder="새 PIN"
-          />
-          <input
-            type="password"
-            inputmode="numeric"
-            maxlength="6"
-            id="pinConfirm"
-            placeholder="다시 입력"
-          />
-        </div>
-
-        <div class="pin-input-row" id="pinLoginRow" style="display: none">
-          <input
-            type="password"
-            inputmode="numeric"
-            maxlength="6"
-            id="pinLogin"
-            placeholder="6자리 PIN"
-          />
-        </div>
-
-        <div class="modal-error" id="pinError"></div>
-
-        <div class="modal-btn-row">
-          <button type="button" class="btn-cancel" id="pinCancelBtn">
-            취소
-          </button>
-          <button type="button" class="btn-confirm" id="pinOkBtn">
-            확인
-          </button>
+      </div>
+      <div class="mode-toggle-wrap">
+        <div class="mode-toggle">
+          <button id="btn-user-mode" class="mode-btn active">사용자 모드</button>
+          <button id="btn-doctor-mode" class="mode-btn">닥터 모드</button>
         </div>
       </div>
     </div>
 
-    <script>
-      // ----- Supabase 설정 -----
-      const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
-      const SUPABASE_KEY =
-        "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
-      const SUPABASE_BUCKET = "drk-photos";
+    <!-- 사용자 모드 -->
+    <div id="user-mode">
+      <!-- 1단계 -->
+      <div class="section-card">
+        <div class="section-title">1단계 · 어디가 제일 고민이야?</div>
+        <div class="section-caption">관심 부위 / 키워드 + 지금 제일 고민되는 부분</div>
 
-      const supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+        <label>관심 부위 / 키워드</label>
+        <div class="hint">예: 골반필러, 힙딥, 어깨, 가슴골 등</div>
+        <textarea id="field-part" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등"></textarea>
 
-      // ----- DOM -----
-      const userSection = document.getElementById("userSection");
-      const doctorSection = document.getElementById("doctorSection");
-      const userModeBtn = document.getElementById("userModeBtn");
-      const doctorModeBtn = document.getElementById("doctorModeBtn");
-      const headerDesc = document.getElementById("headerDesc");
+        <label>지금 제일 고민되는 부분</label>
+        <div class="hint">예: 골반이 너무 얇아서 라인이 없어요 등</div>
+        <textarea id="field-concern" placeholder="예: 골반이 너무 얇아서 라인이 없어요 등"></textarea>
+      </div>
 
-      const consultForm = document.getElementById("consultForm");
-      const submitBtn = document.getElementById("submitBtn");
-      const userStatus = document.getElementById("userStatus");
+      <!-- 2단계 -->
+      <div class="section-card">
+        <div class="section-title">2단계 · 바뀌었으면 하는 느낌/이미지</div>
+        <div class="section-caption">원하는 분위기 / 이미지, 본인이 생각하는 목표 느낌을 적어줘.</div>
 
-      const fieldPart = document.getElementById("fieldPart");
-      const fieldConcern = document.getElementById("fieldConcern");
-      const fieldGoal = document.getElementById("fieldGoal");
-      const fieldChangeLevel = document.getElementById("fieldChangeLevel");
-      const fieldRefNote = document.getElementById("fieldRefNote");
+        <label>원하는 느낌 / 목표</label>
+        <div class="hint">예: 자연스럽게 골반 라운드 볼륨 / 손등은 나이티만 줄어든 정도 등</div>
+        <textarea id="field-goal" placeholder="예: 자연스럽게 골반 라운드 볼륨 / 손등은 나이티만 줄어든 정도 등"></textarea>
 
-      const photoFront = document.getElementById("photoFront");
-      const photoLeft = document.getElementById("photoLeft");
-      const photoRight = document.getElementById("photoRight");
-      const photoBack = document.getElementById("photoBack");
+        <label>어느 정도까지 바꾸고 싶어?</label>
+        <select id="field-change-level">
+          <option value="" selected>선택</option>
+          <option value="soft">소프트(나만 아는 정도)</option>
+          <option value="standard">표준(주변에서 &quot;예뻐졌네?&quot; 하는 정도)</option>
+          <option value="strong">강하게(티 나도 괜찮아요)</option>
+        </select>
+      </div>
 
-      // Doctor UI
-      const caseListEl = document.getElementById("caseList");
-      const doctorDetail = document.getElementById("doctorDetail");
-      const detailInfo = document.getElementById("detailInfo");
-      const detailPhotos = document.getElementById("detailPhotos");
-      const replyHistory = document.getElementById("replyHistory");
-      const replyInput = document.getElementById("replyInput");
-      const clearReplyBtn = document.getElementById("clearReplyBtn");
-      const saveReplyBtn = document.getElementById("saveReplyBtn");
-      const doctorStatus = document.getElementById("doctorStatus");
-      const doctorEmptyInfo = document.getElementById("doctorEmptyInfo");
-      const reloadBtn = document.getElementById("reloadBtn");
+      <!-- 3단계 -->
+      <div class="section-card">
+        <div class="section-title">3단계 · 참고 이미지 & 메모</div>
+        <div class="section-caption">
+          다른 병원 전후, 셀카, 보정 이미지 등 뭐든 좋아. 편하게 올려줘.
+        </div>
 
-      // PIN Modal
-      const pinModalBackdrop = document.getElementById("pinModalBackdrop");
-      const pinModalTitle = document.getElementById("pinModalTitle");
-      const pinModalText = document.getElementById("pinModalText");
-      const pinSetupRow = document.getElementById("pinSetupRow");
-      const pinLoginRow = document.getElementById("pinLoginRow");
-      const pinNew = document.getElementById("pinNew");
-      const pinConfirm = document.getElementById("pinConfirm");
-      const pinLogin = document.getElementById("pinLogin");
-      const pinError = document.getElementById("pinError");
-      const pinCancelBtn = document.getElementById("pinCancelBtn");
-      const pinOkBtn = document.getElementById("pinOkBtn");
+        <label>참고 전후/이미지 메모</label>
+        <div class="hint">예: 인스타에서 본 전후 느낌 / 본인이 보정한 후사진 설명 등</div>
+        <textarea id="field-refnote" placeholder="예: 인스타에서 본 전후 느낌 / 본인이 보정한 후사진 설명 등"></textarea>
+      </div>
 
-      let currentMode = "user";
-      let doctorAuthed = false;
-      let currentCase = null;
-      let pinMode = "setup"; // "setup" | "login"
+      <!-- 사진 업로드 -->
+      <div class="section-card">
+        <div class="section-title">사진 업로드 (정면 / 좌45° / 우45° / 후면)</div>
+        <div class="section-caption">
+          지금은 테스트로 최대 4장까지 업로드 가능해. 얼굴/바디 모두 가능하고, 민감하면 얼굴은 가려도 돼.
+        </div>
 
-      function setMode(mode) {
-        currentMode = mode;
-        if (mode === "user") {
-          userSection.style.display = "";
-          doctorSection.style.display = "none";
-          userModeBtn.classList.add("active");
-          doctorModeBtn.classList.remove("active");
-          headerDesc.style.display = "block";
-        } else {
-          userSection.style.display = "none";
-          doctorSection.style.display = "";
-          userModeBtn.classList.remove("active");
-          doctorModeBtn.classList.add("active");
-          headerDesc.style.display = "none";
-        }
-      }
+        <div class="file-row">
+          <label>정면</label>
+          <input id="photo-front" type="file" accept="image/*" />
+        </div>
+        <div class="file-row">
+          <label>좌 45°</label>
+          <input id="photo-left" type="file" accept="image/*" />
+        </div>
+        <div class="file-row">
+          <label>우 45°</label>
+          <input id="photo-right" type="file" accept="image/*" />
+        </div>
+        <div class="file-row">
+          <label>후면</label>
+          <input id="photo-back" type="file" accept="image/*" />
+        </div>
 
-      // ----- PIN MODAL -----
-      function openPinSetup() {
-        pinMode = "setup";
-        pinModalTitle.textContent = "닥터 모드 PIN 설정";
-        pinModalText.textContent =
-          "처음 한 번만 6자리 숫자로 PIN을 만들어줘. 이 브라우저에서만 기억할게.";
-        pinSetupRow.style.display = "flex";
-        pinLoginRow.style.display = "none";
-        pinNew.value = "";
-        pinConfirm.value = "";
+        <div class="note">
+          업로드는 Wi-Fi 기준으로 수 초 정도 걸릴 수 있어요. 창 닫지 말고 잠깐만 기다려주세요.
+        </div>
+
+        <button id="btn-submit" class="primary-btn">상담 보내기</button>
+        <div id="user-status" class="note"></div>
+      </div>
+    </div>
+
+    <!-- 닥터 모드 -->
+    <div id="doctor-mode" class="hidden">
+      <div class="section-card">
+        <div class="doctor-header">
+          <div>
+            <div class="section-title">닥터케이 대기함</div>
+            <div class="section-caption">
+              전국에서 올라온 “이거 필러로 돼요?” 케이스들을 한 번에 관리하는 화면입니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="doctor-controls">
+          <select id="filter-status">
+            <option value="new">대기 중 케이스만</option>
+            <option value="answered">답변 완료만</option>
+            <option value="all">전체 보기</option>
+          </select>
+          <button id="btn-refresh" class="small-btn">새로고침</button>
+        </div>
+
+        <div id="case-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN 설정/입력 모달 -->
+  <div id="pin-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal" id="pin-modal">
+      <div class="modal-title" id="pin-modal-title">닥터 모드 PIN 설정</div>
+      <div class="modal-text" id="pin-modal-text">
+        처음 한 번만 6자리 숫자로 PIN을 만들어줘. 이 브라우저에서만 기억해둘게.
+      </div>
+      <div class="pin-input-row">
+        <input
+          id="pin-input-1"
+          type="password"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="새 PIN"
+        />
+        <input
+          id="pin-input-2"
+          type="password"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="다시 입력"
+        />
+      </div>
+      <div id="pin-error" class="error-text"></div>
+      <div class="modal-actions">
+        <button id="pin-cancel" class="btn-ghost">취소</button>
+        <button id="pin-confirm" class="btn-solid">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 케이스 상세 모달 -->
+  <div id="detail-modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal detail-modal">
+      <div class="modal-title">케이스 상세</div>
+      <div class="modal-text" id="detail-header"></div>
+
+      <div class="detail-grid">
+        <div>
+          <div class="detail-label">관심 부위 / 키워드</div>
+          <div id="detail-part" class="detail-box"></div>
+
+          <div class="detail-label" style="margin-top: 6px;">지금 제일 고민되는 부분</div>
+          <div id="detail-concern" class="detail-box"></div>
+
+          <div class="detail-label" style="margin-top: 6px;">원하는 느낌 / 목표</div>
+          <div id="detail-goal" class="detail-box"></div>
+        </div>
+        <div>
+          <div class="detail-label">변화 강도</div>
+          <div id="detail-change" class="detail-box"></div>
+
+          <div class="detail-label" style="margin-top: 6px;">참고 전후/이미지 메모</div>
+          <div id="detail-refnote" class="detail-box"></div>
+
+          <div class="detail-label" style="margin-top: 6px;">사진 링크</div>
+          <div class="detail-box">
+            <div class="photo-links" id="detail-photos"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="doctor-answer-area">
+        <div class="detail-label">닥터케이 답변</div>
+        <textarea id="detail-answer"></textarea>
+        <div class="note">
+          예: 필러로 가능한지 여부, 예상 난이도(쉬움/보통/어려움), 대략적인 권장 CC와 주의점 등을 적어줘.
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="detail-close" class="btn-ghost">닫기</button>
+        <button id="detail-save" class="btn-solid">답변 저장</button>
+      </div>
+      <div id="detail-status" class="note"></div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- 스크립트 -->
+  <script>
+    // ---------------- Supabase 설정 ----------------
+    const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
+    const SUPABASE_KEY =
+      "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const CASES_TABLE = "cases";
+    const PHOTOS_BUCKET = "drk-photos";
+
+    // ---------------- 유틸 ----------------
+
+    function showToast(message, ms = 2200) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.remove("hidden");
+      setTimeout(() => {
+        el.classList.add("hidden");
+      }, ms);
+    }
+
+    function formatDate(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      return `${y}-${m}-${day} ${hh}:${mm}`;
+    }
+
+    function changeLabel(code) {
+      if (!code) return "-";
+      if (code === "soft") return "소프트(나만 아는 정도)";
+      if (code === "standard") return "표준(주변에서 예뻐졌네? 하는 정도)";
+      if (code === "strong") return "강하게(티 나도 괜찮아요)";
+      return code;
+    }
+
+    function statusLabel(status) {
+      if (status === "answered") return "답변 완료";
+      if (status === "closed") return "종결";
+      return "대기 중";
+    }
+
+    function statusBadgeClass(status) {
+      if (status === "answered") return "badge badge-status-answered";
+      if (status === "closed") return "badge badge-status-closed";
+      return "badge badge-status-new";
+    }
+
+    // ---------------- 모드 전환 ----------------
+
+    const userModeEl = document.getElementById("user-mode");
+    const doctorModeEl = document.getElementById("doctor-mode");
+    const btnUserMode = document.getElementById("btn-user-mode");
+    const btnDoctorMode = document.getElementById("btn-doctor-mode");
+
+    btnUserMode.addEventListener("click", () => {
+      btnUserMode.classList.add("active");
+      btnDoctorMode.classList.remove("active");
+      userModeEl.classList.remove("hidden");
+      doctorModeEl.classList.add("hidden");
+    });
+
+    btnDoctorMode.addEventListener("click", () => {
+      handleDoctorModeClick();
+    });
+
+    function openDoctorMode() {
+      btnDoctorMode.classList.add("active");
+      btnUserMode.classList.remove("active");
+      userModeEl.classList.add("hidden");
+      doctorModeEl.classList.remove("hidden");
+      loadCases();
+    }
+
+    // ---------------- PIN 로직 ----------------
+
+    const PIN_KEY = "drk_filler_pin_v1";
+    let isSettingPin = false;
+
+    const pinBackdrop = document.getElementById("pin-modal-backdrop");
+    const pinInput1 = document.getElementById("pin-input-1");
+    const pinInput2 = document.getElementById("pin-input-2");
+    const pinError = document.getElementById("pin-error");
+    const pinTitle = document.getElementById("pin-modal-title");
+    const pinText = document.getElementById("pin-modal-text");
+    const pinCancelBtn = document.getElementById("pin-cancel");
+    const pinConfirmBtn = document.getElementById("pin-confirm");
+
+    function handleDoctorModeClick() {
+      const savedPin = localStorage.getItem(PIN_KEY);
+      if (!savedPin) {
+        // PIN 설정 모드
+        isSettingPin = true;
+        pinTitle.textContent = "닥터 모드 PIN 설정";
+        pinText.textContent =
+          "처음 한 번만 6자리 숫자로 PIN을 만들어줘. 이 브라우저에서만 기억해둘게.";
+        pinInput2.classList.remove("hidden");
+        pinBackdrop.classList.remove("hidden");
+        pinInput1.value = "";
+        pinInput2.value = "";
         pinError.textContent = "";
-        pinModalBackdrop.style.display = "flex";
-        pinNew.focus();
-      }
-
-      function openPinLogin() {
-        pinMode = "login";
-        pinModalTitle.textContent = "닥터 모드 PIN 입력";
-        pinModalText.textContent =
-          "처음 설정한 6자리 PIN을 입력하면 닥터 모드로 들어갈 수 있어.";
-        pinSetupRow.style.display = "none";
-        pinLoginRow.style.display = "flex";
-        pinLogin.value = "";
+        pinInput1.focus();
+      } else {
+        // PIN 입력 모드
+        isSettingPin = false;
+        pinTitle.textContent = "닥터 모드 PIN 입력";
+        pinText.textContent = "설정해둔 6자리 PIN을 입력해줘.";
+        pinInput1.value = "";
+        pinInput2.value = "";
+        pinInput2.classList.add("hidden");
+        pinBackdrop.classList.remove("hidden");
         pinError.textContent = "";
-        pinModalBackdrop.style.display = "flex";
-        pinLogin.focus();
+        pinInput1.focus();
       }
+    }
 
-      function closePinModal() {
-        pinModalBackdrop.style.display = "none";
-      }
+    pinCancelBtn.addEventListener("click", () => {
+      pinBackdrop.classList.add("hidden");
+      pinError.textContent = "";
+    });
 
-      pinCancelBtn.addEventListener("click", () => {
-        closePinModal();
-        if (!doctorAuthed) {
-          setMode("user");
-        }
-      });
+    pinConfirmBtn.addEventListener("click", () => {
+      const savedPin = localStorage.getItem(PIN_KEY);
+      const v1 = pinInput1.value.trim();
+      const v2 = pinInput2.value.trim();
 
-      pinOkBtn.addEventListener("click", () => {
-        if (pinMode === "setup") {
-          const p1 = pinNew.value.trim();
-          const p2 = pinConfirm.value.trim();
-          if (!/^\d{6}$/.test(p1)) {
-            pinError.textContent = "6자리 숫자로 입력해줘.";
-            return;
-          }
-          if (p1 !== p2) {
-            pinError.textContent = "두 칸의 PIN이 일치하지 않아.";
-            return;
-          }
-          localStorage.setItem("drk_pin", p1);
-          doctorAuthed = true;
-          closePinModal();
-          setMode("doctor");
-          loadCases();
-        } else {
-          const saved = localStorage.getItem("drk_pin");
-          const input = pinLogin.value.trim();
-          if (input === saved) {
-            doctorAuthed = true;
-            closePinModal();
-            setMode("doctor");
-            loadCases();
-          } else {
-            pinError.textContent = "PIN이 맞지 않아.";
-          }
-        }
-      });
-
-      // ----- MODE BUTTONS -----
-      userModeBtn.addEventListener("click", () => setMode("user"));
-
-      doctorModeBtn.addEventListener("click", () => {
-        const saved = localStorage.getItem("drk_pin");
-        if (doctorAuthed) {
-          setMode("doctor");
+      if (isSettingPin) {
+        if (!/^\d{6}$/.test(v1) || !/^\d{6}$/.test(v2)) {
+          pinError.textContent = "6자리 숫자로 입력해줘.";
           return;
         }
-        if (!saved) {
-          openPinSetup();
-        } else {
-          openPinLogin();
-        }
-      });
-
-      // ----- USER SUBMIT -----
-      async function uploadPhoto(file) {
-        if (!file) return null;
-        const ext = file.name.split(".").pop();
-        const path =
-          "cases/" +
-          Date.now() +
-          "-" +
-          Math.random().toString(36).slice(2) +
-          "." +
-          ext;
-        const { error } = await supabaseClient.storage
-          .from(SUPABASE_BUCKET)
-          .upload(path, file, { cacheControl: "3600", upsert: false });
-
-        if (error) {
-          console.error("upload error", error);
-          throw new Error("이미지 업로드 중 오류가 발생했어.");
-        }
-
-        const { data } = supabaseClient.storage
-          .from(SUPABASE_BUCKET)
-          .getPublicUrl(path);
-
-        return data.publicUrl;
-      }
-
-      consultForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        userStatus.classList.remove("ok", "err");
-
-        const part = fieldPart.value.trim();
-        const concern = fieldConcern.value.trim();
-        const goal = fieldGoal.value.trim();
-        const changeLevel = fieldChangeLevel.value;
-        const refnote = fieldRefNote.value.trim();
-
-        if (!part || !concern) {
-          userStatus.textContent = "관심 부위와 고민되는 부분은 꼭 적어줘.";
-          userStatus.classList.add("err");
+        if (v1 !== v2) {
+          pinError.textContent = "두 PIN이 서로 달라.";
           return;
         }
-
-        submitBtn.disabled = true;
-        userStatus.textContent =
-          "업로드 중입니다. 창 닫지 말고 잠시만 기다려주세요.";
-        userStatus.classList.remove("err", "ok");
-
-        try {
-          const [frontUrl, leftUrl, rightUrl, backUrl] = await Promise.all([
-            uploadPhoto(photoFront.files[0]),
-            uploadPhoto(photoLeft.files[0]),
-            uploadPhoto(photoRight.files[0]),
-            uploadPhoto(photoBack.files[0]),
-          ]);
-
-          const { error } = await supabaseClient.from("cases").insert([
-            {
-              part,
-              concern,
-              goal,
-              change_level: changeLevel,
-              refnote,
-              status: "new",
-              photos_front: frontUrl,
-              photos_left: leftUrl,
-              photos_right: rightUrl,
-              photos_back: backUrl,
-              messages: [],
-            },
-          ]);
-
-          if (error) {
-            console.error(error);
-            throw new Error("저장 중 오류가 발생했어.");
-          }
-
-          consultForm.reset();
-          userStatus.textContent =
-            "접수 완료! 순서대로 차트를 확인하고 답변 남길게.";
-          userStatus.classList.add("ok");
-        } catch (err) {
-          console.error(err);
-          userStatus.textContent =
-            err.message || "업로드 중 알 수 없는 오류가 발생했어.";
-          userStatus.classList.add("err");
-        } finally {
-          submitBtn.disabled = false;
+        localStorage.setItem(PIN_KEY, v1);
+        pinBackdrop.classList.add("hidden");
+        showToast("PIN이 설정되었어.");
+        openDoctorMode();
+      } else {
+        if (!/^\d{6}$/.test(v1)) {
+          pinError.textContent = "6자리 숫자를 입력해줘.";
+          return;
         }
+        if (savedPin && v1 === savedPin) {
+          pinBackdrop.classList.add("hidden");
+          openDoctorMode();
+        } else {
+          pinError.textContent = "PIN이 맞지 않아.";
+        }
+      }
+    });
+
+    // ESC로 모달 닫기
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        pinBackdrop.classList.add("hidden");
+        detailBackdrop.classList.add("hidden");
+      }
+    });
+
+    // ---------------- 사용자 모드: 상담 보내기 ----------------
+
+    const fieldPart = document.getElementById("field-part");
+    const fieldConcern = document.getElementById("field-concern");
+    const fieldGoal = document.getElementById("field-goal");
+    const fieldChange = document.getElementById("field-change-level");
+    const fieldRefnote = document.getElementById("field-refnote");
+
+    const photoFront = document.getElementById("photo-front");
+    const photoLeft = document.getElementById("photo-left");
+    const photoRight = document.getElementById("photo-right");
+    const photoBack = document.getElementById("photo-back");
+
+    const btnSubmit = document.getElementById("btn-submit");
+    const userStatus = document.getElementById("user-status");
+
+    btnSubmit.addEventListener("click", async () => {
+      const part = fieldPart.value.trim();
+      const concern = fieldConcern.value.trim();
+      const goal = fieldGoal.value.trim();
+      const changeLevel = fieldChange.value;
+      const refnote = fieldRefnote.value.trim();
+
+      if (!part || !concern) {
+        showToast("관심 부위와 고민되는 부분은 꼭 적어줘.");
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      userStatus.textContent = "사진과 내용을 업로드 중입니다...";
+
+      try {
+        const photoPaths = {
+          photos_front: null,
+          photos_left: null,
+          photos_right: null,
+          photos_back: null,
+        };
+
+        const uploads = [
+          { file: photoFront.files[0], key: "photos_front" },
+          { file: photoLeft.files[0], key: "photos_left" },
+          { file: photoRight.files[0], key: "photos_right" },
+          { file: photoBack.files[0], key: "photos_back" },
+        ];
+
+        const ts = Date.now();
+
+        for (const item of uploads) {
+          if (!item.file) continue;
+          const ext = item.file.name.split(".").pop();
+          const fileName = `${item.key}_${ts}.${ext}`;
+          const filePath = `cases/${ts}/${fileName}`;
+          const { error: uploadError } = await supabaseClient.storage
+            .from(PHOTOS_BUCKET)
+            .upload(filePath, item.file, {
+              upsert: false,
+            });
+          if (uploadError) {
+            console.error(uploadError);
+            throw new Error("사진 업로드 중 오류가 발생했어.");
+          }
+          photoPaths[item.key] = filePath;
+        }
+
+        const messages = [
+          {
+            role: "user",
+            created_at: new Date().toISOString(),
+            summary: "초기 상담 요청",
+          },
+        ];
+
+        const { error: insertError } = await supabaseClient
+          .from(CASES_TABLE)
+          .insert({
+            part,
+            concern,
+            goal,
+            change_level: changeLevel || null,
+            refnote,
+            status: "new",
+            photos_front: photoPaths.photos_front,
+            photos_left: photoPaths.photos_left,
+            photos_right: photoPaths.photos_right,
+            photos_back: photoPaths.photos_back,
+            messages,
+          });
+
+        if (insertError) {
+          console.error(insertError);
+          throw new Error("상담 저장 중 오류가 발생했어.");
+        }
+
+        userStatus.textContent = "";
+        showToast("상담이 잘 접수됐어. 답변 오면 알림 링크로 확인해줘.");
+
+        // 폼 초기화
+        fieldPart.value = "";
+        fieldConcern.value = "";
+        fieldGoal.value = "";
+        fieldChange.value = "";
+        fieldRefnote.value = "";
+        photoFront.value = "";
+        photoLeft.value = "";
+        photoRight.value = "";
+        photoBack.value = "";
+      } catch (err) {
+        console.error(err);
+        userStatus.textContent = "오류가 발생했어. 잠시 후 다시 시도해줘.";
+      } finally {
+        btnSubmit.disabled = false;
+      }
+    });
+
+    // ---------------- 닥터 모드: 리스트 & 상세 ----------------
+
+    const caseListEl = document.getElementById("case-list");
+    const filterStatusEl = document.getElementById("filter-status");
+    const btnRefresh = document.getElementById("btn-refresh");
+
+    let currentCases = [];
+    let currentCase = null;
+
+    async function loadCases() {
+      caseListEl.innerHTML = "불러오는 중...";
+      const { data, error } = await supabaseClient
+        .from(CASES_TABLE)
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        caseListEl.innerHTML = '<div class="doctor-list-empty">불러오기 오류가 발생했어.</div>';
+        return;
+      }
+
+      currentCases = data || [];
+      renderCaseList();
+    }
+
+    function renderCaseList() {
+      const filter = filterStatusEl.value;
+      let list = currentCases;
+      if (filter === "new") {
+        list = list.filter((c) => !c.status || c.status === "new");
+      } else if (filter === "answered") {
+        list = list.filter((c) => c.status === "answered");
+      }
+
+      if (!list.length) {
+        caseListEl.innerHTML =
+          '<div class="doctor-list-empty">아직 접수된 케이스가 없어요.</div>';
+        return;
+      }
+
+      caseListEl.innerHTML = "";
+
+      list.forEach((c) => {
+        const div = document.createElement("div");
+        div.className = "case-card";
+
+        const status = c.status || "new";
+        const created = formatDate(c.created_at);
+        const part = c.part || "-";
+        const concern =
+          (c.concern || "").length > 60
+            ? c.concern.slice(0, 60) + "…"
+            : c.concern || "-";
+
+        div.innerHTML = `
+          <div class="case-card-header">
+            <div>
+              <div class="case-card-title">${part}</div>
+              <div class="case-card-meta">${created}</div>
+            </div>
+            <span class="${statusBadgeClass(status)}">${statusLabel(status)}</span>
+          </div>
+          <div class="case-card-body">${concern}</div>
+        `;
+
+        div.addEventListener("click", () => openCaseDetail(c));
+        caseListEl.appendChild(div);
+      });
+    }
+
+    filterStatusEl.addEventListener("change", renderCaseList);
+    btnRefresh.addEventListener("click", loadCases);
+
+    // 상세 모달
+    const detailBackdrop = document.getElementById("detail-modal-backdrop");
+    const detailHeader = document.getElementById("detail-header");
+    const detailPart = document.getElementById("detail-part");
+    const detailConcern = document.getElementById("detail-concern");
+    const detailGoal = document.getElementById("detail-goal");
+    const detailChange = document.getElementById("detail-change");
+    const detailRefnote = document.getElementById("detail-refnote");
+    const detailPhotos = document.getElementById("detail-photos");
+    const detailAnswer = document.getElementById("detail-answer");
+    const detailStatus = document.getElementById("detail-status");
+    const detailClose = document.getElementById("detail-close");
+    const detailSave = document.getElementById("detail-save");
+
+    function openCaseDetail(c) {
+      currentCase = c;
+      const created = formatDate(c.created_at);
+      detailHeader.textContent = `${created} · ${statusLabel(c.status || "new")}`;
+
+      detailPart.textContent = c.part || "";
+      detailConcern.textContent = c.concern || "";
+      detailGoal.textContent = c.goal || "";
+      detailChange.textContent = changeLabel(c.change_level) || "-";
+      detailRefnote.textContent = c.refnote || "";
+
+      detailPhotos.innerHTML = "";
+      const photoFields = [
+        { key: "photos_front", label: "정면" },
+        { key: "photos_left", label: "좌 45°" },
+        { key: "photos_right", label: "우 45°" },
+        { key: "photos_back", label: "후면" },
+      ];
+      photoFields.forEach(({ key, label }) => {
+        const path = c[key];
+        if (!path) return;
+        const url = `${SUPABASE_URL}/storage/v1/object/public/${PHOTOS_BUCKET}/${path}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.textContent = label;
+        detailPhotos.appendChild(a);
       });
 
-      // ----- DOCTOR MODE: LOAD CASES -----
-      async function loadCases() {
-        doctorStatus.textContent = "";
-        caseListEl.innerHTML = "불러오는 중...";
-        doctorEmptyInfo.style.display = "none";
-        doctorDetail.style.display = "none";
-        currentCase = null;
+      // 이전 답변 있으면 불러오기
+      let lastAnswer = "";
+      if (Array.isArray(c.messages)) {
+        const docs = c.messages.filter((m) => m.role === "doctor");
+        if (docs.length) {
+          lastAnswer = docs[docs.length - 1].text || "";
+        }
+      }
+      detailAnswer.value = lastAnswer;
+      detailStatus.textContent = "";
+      detailBackdrop.classList.remove("hidden");
+    }
 
-        const { data, error } = await supabaseClient
-          .from("cases")
-          .select("*")
-          .order("created_at", { ascending: false });
+    detailClose.addEventListener("click", () => {
+      detailBackdrop.classList.add("hidden");
+      detailStatus.textContent = "";
+    });
+
+    detailSave.addEventListener("click", async () => {
+      if (!currentCase) return;
+      const answer = detailAnswer.value.trim();
+      if (!answer) {
+        detailStatus.textContent = "답변 내용을 적어줘.";
+        return;
+      }
+
+      detailSave.disabled = true;
+      detailStatus.textContent = "저장 중...";
+
+      try {
+        let messages = currentCase.messages;
+        if (!Array.isArray(messages)) messages = [];
+        messages.push({
+          role: "doctor",
+          text: answer,
+          created_at: new Date().toISOString(),
+        });
+
+        const { error } = await supabaseClient
+          .from(CASES_TABLE)
+          .update({ status: "answered", messages })
+          .eq("id", currentCase.id);
 
         if (error) {
           console.error(error);
-          caseListEl.innerHTML = "";
-          doctorEmptyInfo.style.display = "block";
-          doctorEmptyInfo.textContent = "케이스를 불러오지 못했어.";
+          detailStatus.textContent = "저장 중 오류가 발생했어.";
           return;
         }
 
-        if (!data || data.length === 0) {
-          caseListEl.innerHTML = "";
-          doctorEmptyInfo.style.display = "block";
-          doctorEmptyInfo.textContent = "아직 접수된 케이스가 없어.";
-          return;
-        }
+        detailStatus.textContent = "";
+        detailBackdrop.classList.add("hidden");
+        showToast("답변이 저장됐어.");
 
-        caseListEl.innerHTML = "";
-        doctorEmptyInfo.style.display = "none";
-
-        data.forEach((item) => {
-          const div = document.createElement("div");
-          div.className = "case-item";
-
-          const header = document.createElement("div");
-          header.className = "case-item-header";
-
-          const left = document.createElement("div");
-          const partSpan = document.createElement("span");
-          partSpan.className = "case-item-part";
-          partSpan.textContent = item.part || "(관심 부위 미입력)";
-          left.appendChild(partSpan);
-
-          const concernDiv = document.createElement("div");
-          concernDiv.className = "case-item-concern";
-          concernDiv.textContent =
-            (item.concern || "").slice(0, 40) +
-            (item.concern && item.concern.length > 40 ? "…" : "");
-          left.appendChild(concernDiv);
-
-          const right = document.createElement("div");
-          const statusBadge = document.createElement("span");
-          statusBadge.className =
-            "badge " +
-            (item.status === "answered" ? "badge-done" : "badge-new");
-          statusBadge.textContent =
-            item.status === "answered" ? "답변 완료" : "대기";
-          right.appendChild(statusBadge);
-
-          const dateSpan = document.createElement("span");
-          dateSpan.className = "case-item-date";
-          if (item.created_at) {
-            const d = new Date(item.created_at);
-            const s = `${d.getMonth() + 1}/${d.getDate()} ${String(
-              d.getHours()
-            ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-            dateSpan.textContent = s;
-          }
-          right.appendChild(dateSpan);
-
-          header.appendChild(left);
-          header.appendChild(right);
-
-          div.appendChild(header);
-
-          div.addEventListener("click", () => {
-            selectCase(item);
-          });
-
-          caseListEl.appendChild(div);
-        });
+        // 로컬 데이터 갱신
+        currentCase.status = "answered";
+        currentCase.messages = messages;
+        const idx = currentCases.findIndex((c) => c.id === currentCase.id);
+        if (idx >= 0) currentCases[idx] = currentCase;
+        renderCaseList();
+      } catch (err) {
+        console.error(err);
+        detailStatus.textContent = "저장 중 오류가 발생했어.";
+      } finally {
+        detailSave.disabled = false;
       }
-
-      function selectCase(item) {
-        currentCase = item;
-        doctorDetail.style.display = "";
-        doctorStatus.textContent = "";
-
-        // 기본 정보
-        const lines = [];
-        lines.push("· 관심 부위 / 키워드");
-        lines.push(item.part || "-");
-        lines.push("");
-        lines.push("· 지금 제일 고민되는 부분");
-        lines.push(item.concern || "-");
-        lines.push("");
-        lines.push("· 원하는 느낌 / 목표");
-        lines.push(item.goal || "-");
-        lines.push("");
-        lines.push("· 어느 정도까지 바꾸고 싶은지");
-        let levelText = "-";
-        if (item.change_level === "standard") {
-          levelText = "표준 (주변에서 예뻐졌네? 하는 정도)";
-        } else if (item.change_level === "strong") {
-          levelText = "확실한 변화 (사진에서 바로 보이는 정도)";
-        } else if (item.change_level === "image-change") {
-          levelText = "이미지 체인지 (완전 다른 느낌)";
-        }
-        lines.push(levelText);
-        lines.push("");
-        lines.push("· 참고 전후/이미지 메모");
-        lines.push(item.refnote || "-");
-
-        detailInfo.textContent = lines.join("\n");
-
-        // 사진
-        detailPhotos.innerHTML = "";
-        const photoMap = [
-          ["정면", item.photos_front],
-          ["좌 45°", item.photos_left],
-          ["우 45°", item.photos_right],
-          ["후면", item.photos_back],
-        ];
-        photoMap.forEach(([label, url]) => {
-          if (!url) return;
-          const a = document.createElement("a");
-          a.href = url;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          a.textContent = label;
-          detailPhotos.appendChild(a);
-        });
-        if (detailPhotos.innerHTML === "") {
-          detailPhotos.textContent = "업로드된 사진이 없어요.";
-        }
-
-        // 답변 히스토리
-        replyHistory.innerHTML = "";
-        const msgs = Array.isArray(item.messages) ? item.messages : [];
-        if (msgs.length === 0) {
-          const empty = document.createElement("div");
-          empty.className = "status-text";
-          empty.textContent = "아직 남긴 답변이 없어.";
-          replyHistory.appendChild(empty);
-        } else {
-          msgs.forEach((m) => {
-            const div = document.createElement("div");
-            div.className = "reply-item";
-            div.textContent = m.text || "";
-            const t = document.createElement("time");
-            if (m.created_at) {
-              const d = new Date(m.created_at);
-              t.textContent = `${d.getMonth() + 1}/${d.getDate()} ${String(
-                d.getHours()
-              ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-            }
-            div.appendChild(t);
-            replyHistory.appendChild(div);
-          });
-        }
-
-        replyInput.value = "";
-      }
-
-      clearReplyBtn.addEventListener("click", () => {
-        replyInput.value = "";
-      });
-
-      saveReplyBtn.addEventListener("click", async () => {
-        if (!currentCase) {
-          doctorStatus.textContent = "먼저 케이스를 선택해줘.";
-          doctorStatus.classList.add("err");
-          return;
-        }
-        const text = replyInput.value.trim();
-        if (!text) {
-          doctorStatus.textContent = "새 답변 내용을 입력해줘.";
-          doctorStatus.classList.add("err");
-          return;
-        }
-
-        doctorStatus.textContent = "저장 중...";
-        doctorStatus.classList.remove("err", "ok");
-        saveReplyBtn.disabled = true;
-
-        try {
-          const msgs = Array.isArray(currentCase.messages)
-            ? currentCase.messages.slice()
-            : [];
-          msgs.unshift({
-            role: "doctor",
-            text,
-            created_at: new Date().toISOString(),
-          });
-
-          const { data, error } = await supabaseClient
-            .from("cases")
-            .update({ messages: msgs, status: "answered" })
-            .eq("id", currentCase.id)
-            .select()
-            .single();
-
-          if (error) {
-            console.error(error);
-            throw new Error("저장 중 오류가 발생했어.");
-          }
-
-          doctorStatus.textContent = "저장 완료!";
-          doctorStatus.classList.add("ok");
-          replyInput.value = "";
-          currentCase = data;
-          selectCase(currentCase);
-          await loadCases();
-        } catch (err) {
-          console.error(err);
-          doctorStatus.textContent =
-            err.message || "저장 중 알 수 없는 오류가 발생했어.";
-          doctorStatus.classList.add("err");
-        } finally {
-          saveReplyBtn.disabled = false;
-        }
-      });
-
-      reloadBtn.addEventListener("click", () => {
-        if (!doctorAuthed) return;
-        loadCases();
-      });
-
-      // 초기 모드는 사용자
-      setMode("user");
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
+c
