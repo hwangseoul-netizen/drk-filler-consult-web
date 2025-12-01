@@ -15,61 +15,70 @@
       --text-sub: #7a7a7a;
       --border-soft: #e2e2e8;
     }
+
     body {
       margin: 0;
       background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       color: var(--text-main);
     }
+
     .app {
       max-width: 900px;
       margin: auto;
       padding: 20px;
     }
+
+    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
     }
+
     .header-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
+
     .profile {
       background: var(--primary);
       color: white;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 18px;
     }
+
     .toggle {
       display: flex;
       background: var(--primary-soft);
       padding: 4px;
-      border-radius: 20px;
+      border-radius: 18px;
     }
+
     .toggle button {
-      flex: 1;
       border: 0;
       background: transparent;
       padding: 6px 14px;
-      border-radius: 16px;
+      border-radius: 14px;
       font-size: 14px;
       cursor: pointer;
       color: #555;
     }
+
     .toggle .active {
       background: var(--primary);
-      color: white;
+      color: #ffffff;
     }
 
+    /* CARDS */
     .card {
       background: var(--card);
       border-radius: 12px;
@@ -77,27 +86,32 @@
       margin-bottom: 18px;
       border: 1px solid var(--border-soft);
     }
+
     .label {
       font-size: 15px;
       font-weight: 600;
       margin-bottom: 6px;
     }
-    .input, textarea, select {
+
+    input, textarea, select {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
       border: 1px solid var(--border-soft);
       font-size: 15px;
-      background: white;
+      background: #ffffff;
     }
+
     textarea {
       height: 90px;
       resize: none;
     }
+
     .file-area {
       margin-top: 6px;
       margin-bottom: 8px;
     }
+
     .submit-btn {
       width: 100%;
       padding: 15px;
@@ -110,8 +124,9 @@
       margin-top: 12px;
       cursor: pointer;
     }
+
     #loadingText {
-      margin-top: 14px;
+      margin-top: 15px;
       font-size: 14px;
       color: var(--primary);
       text-align: center;
@@ -127,7 +142,7 @@
     <header>
       <div class="header-left">
         <div class="profile">K</div>
-        <strong>닥터케이 필러 상담</strong>
+        <strong style="font-size:18px;">닥터케이 필러 상담</strong>
       </div>
 
       <div class="toggle">
@@ -144,7 +159,7 @@
     <!-- STEP 1 -->
     <div class="card">
       <div class="label">1단계 · 어디가 고민이야?</div>
-      <input id="part" class="input" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등">
+      <input id="part" placeholder="예: 골반필러, 힙딥, 어깨, 가슴골 등" />
       <textarea id="concern" placeholder="예: 골반이 너무 얇아서 라인이 없어요 등"></textarea>
     </div>
 
@@ -168,18 +183,10 @@
     <!-- STEP 4 -->
     <div class="card">
       <div class="label">사진 업로드 (정면 / 좌45 / 우45 / 후면)</div>
-      <div class="file-area">
-        <input type="file" id="photo_front">
-      </div>
-      <div class="file-area">
-        <input type="file" id="photo_left">
-      </div>
-      <div class="file-area">
-        <input type="file" id="photo_right">
-      </div>
-      <div class="file-area">
-        <input type="file" id="photo_back">
-      </div>
+      <div class="file-area"><input type="file" id="photo_front"></div>
+      <div class="file-area"><input type="file" id="photo_left"></div>
+      <div class="file-area"><input type="file" id="photo_right"></div>
+      <div class="file-area"><input type="file" id="photo_back"></div>
     </div>
 
     <button class="submit-btn" onclick="sendConsult()">상담 보내기</button>
@@ -191,13 +198,13 @@
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- MAIN LOGIC -->
   <script>
+    /* Supabase 연결 */
     const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
     const SUPABASE_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
-
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    /* 파일 업로드 함수 */
     async function uploadToSupabase(file, name) {
       if (!file) return null;
 
@@ -221,6 +228,7 @@
       return data.publicUrl;
     }
 
+    /* 상담 보내기 */
     async function sendConsult() {
       document.getElementById("loadingText").style.display = "block";
 
@@ -229,15 +237,15 @@
       const goal = document.getElementById("goal").value;
       const changeLevel = document.getElementById("changeLevel").value;
 
-      const front = document.getElementById("photo_front").files[0];
-      const left = document.getElementById("photo_left").files[0];
-      const right = document.getElementById("photo_right").files[0];
-      const back = document.getElementById("photo_back").files[0];
+      const f1 = document.getElementById("photo_front").files[0];
+      const f2 = document.getElementById("photo_left").files[0];
+      const f3 = document.getElementById("photo_right").files[0];
+      const f4 = document.getElementById("photo_back").files[0];
 
-      const frontUrl = await uploadToSupabase(front, "front");
-      const leftUrl = await uploadToSupabase(left, "left");
-      const rightUrl = await uploadToSupabase(right, "right");
-      const backUrl = await uploadToSupabase(back, "back");
+      const frontUrl = await uploadToSupabase(f1, "front");
+      const leftUrl = await uploadToSupabase(f2, "left");
+      const rightUrl = await uploadToSupabase(f3, "right");
+      const backUrl = await uploadToSupabase(f4, "back");
 
       const { error } = await supabaseClient.from("cases").insert({
         part,
@@ -255,7 +263,7 @@
       document.getElementById("loadingText").style.display = "none";
 
       if (error) {
-        alert("저장 중 오류가 발생했어. 다시 시도해줘!");
+        alert("저장 중 오류가 발생했어!");
         console.log(error);
         return;
       }
