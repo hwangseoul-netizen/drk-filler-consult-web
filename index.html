@@ -6,141 +6,141 @@
   <title>Body Filler MasterLab by Dr.K</title>
 
   <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     body {
       margin: 0;
-      font-family: 'Pretendard', sans-serif;
       background-color: #1A1A1A;
       color: #E6C2B3;
+      font-family: 'Pretendard', sans-serif;
     }
 
     header {
       width: 100%;
-      padding: 30px 40px;
+      padding: 28px 34px;
+      box-sizing: border-box;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-sizing: border-box;
     }
 
     .logo-box {
-      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .logo-line {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #E6C2B3, #cda394);
-      border-radius: 50%;
-      margin-bottom: 10px;
+    /* Signature Line Logo */
+    .logo-svg {
+      width: 120px;
     }
 
     .brand {
       font-size: 24px;
       font-weight: 700;
-      margin-bottom: 5px;
     }
 
     .tagline {
-      font-size: 16px;
-      opacity: 0.9;
+      font-size: 14px;
+      opacity: .85;
     }
 
     .top-nav {
       display: flex;
-      gap: 16px;
+      gap: 12px;
     }
 
     .nav-btn {
-      padding: 10px 18px;
+      padding: 10px 16px;
       border: 1px solid #E6C2B3;
-      border-radius: 8px;
-      cursor: pointer;
       background: transparent;
+      border-radius: 8px;
       color: #E6C2B3;
-      font-size: 15px;
+      cursor: pointer;
     }
 
-    .section {
-      padding: 60px 40px;
+    section {
+      padding: 50px 34px;
     }
 
     .main-title {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 700;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
 
-    /* Upload /카테고리 */
     .category-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-top: 20px;
+      gap: 16px;
     }
 
     .category-box {
       border: 1px solid #E6C2B3;
+      padding: 20px;
       border-radius: 12px;
-      padding: 25px;
-      text-align: center;
       cursor: pointer;
-      transition: 0.2s;
+      text-align: center;
+      transition: .2s;
     }
 
     .category-box:hover {
-      background-color: #2A2A2A;
+      background-color: #2b2b2b;
     }
 
-    /* Upload */
-    #upload-section {
-      display: none;
-    }
-
-    input, select, textarea {
+    input, textarea {
       width: 100%;
-      padding: 14px;
-      margin-top: 10px;
       background: #2A2A2A;
       border: 1px solid #E6C2B3;
       border-radius: 8px;
+      padding: 12px;
       color: #E6C2B3;
+      margin-top: 8px;
       box-sizing: border-box;
     }
 
-    .upload-btn {
-      margin-top: 20px;
-      padding: 14px 22px;
-      background: #E6C2B3;
-      color: #1A1A1A;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      font-size: 16px;
+    textarea {
+      height: 90px;
     }
 
-    /* Doctor Mode */
-    #doctor-login, #doctor-panel {
+    .upload-btn {
+      margin-top: 18px;
+      background: #E6C2B3;
+      color: #1A1A1A;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #upload-section,
+    #doctor-login,
+    #doctor-panel {
       display: none;
     }
 
-    .chart-box {
+    .case-box {
       border: 1px solid #E6C2B3;
-      padding: 20px;
-      margin-bottom: 20px;
       border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
     }
-
   </style>
 </head>
 
 <body>
 
+<!-- Header -->
 <header>
   <div class="logo-box">
-    <div class="logo-line"></div>
+    <!-- Signature Line Logo -->
+    <svg class="logo-svg" viewBox="0 0 200 80">
+      <path d="M10 60 Q40 10 80 40 T150 30 Q180 10 190 60" 
+            stroke="#E6C2B3" stroke-width="4" fill="none" />
+    </svg>
+
     <div class="brand">Body Filler MasterLab by Dr.K</div>
     <div class="tagline">바디필러 시술이 아닌 예술을 원한다면. 바디필러 마스터랩에 고민상담부터.</div>
   </div>
@@ -151,8 +151,8 @@
   </div>
 </header>
 
-<!-- Home -->
-<section class="section" id="home-section">
+<!-- Home Section -->
+<section id="home-section">
   <div class="main-title">당신의 바디 실루엣을 과학과 예술로 재구성합니다.</div>
 
   <div class="category-grid">
@@ -167,103 +167,254 @@
   </div>
 </section>
 
-<!-- 상담자 업로드 -->
-<section class="section" id="upload-section">
+<!-- Upload Section -->
+<section id="upload-section">
   <h2 id="upload-title"></h2>
+
+  <label>지금 고민</label>
+  <textarea id="concern"></textarea>
+
+  <label>원하는 느낌</label>
+  <textarea id="desired"></textarea>
+
+  <label>변화 레벨 (light / standard / full)</label>
+  <input id="changeLevel" placeholder="예: full" />
+
+  <label>시술·수술 과거력</label>
+  <textarea id="history"></textarea>
 
   <label>정면 사진</label>
   <input type="file" id="front" />
 
-  <label>측면 사진</label>
-  <input type="file" id="side" />
+  <label>좌 45도</label>
+  <input type="file" id="left45" />
 
-  <label>후면 사진</label>
+  <label>우 45도</label>
+  <input type="file" id="right45" />
+
+  <label>후면</label>
   <input type="file" id="back" />
-
-  <label>45도 영상 또는 사진</label>
-  <input type="file" id="angle45" />
-
-  <label>워너비 / 참고 이미지 (선택)</label>
-  <input type="file" id="reference" />
-
-  <label>시술/수술 과거력</label>
-  <textarea id="history" placeholder="보형물, 지방흡입 등 입력"></textarea>
 
   <button class="upload-btn" onclick="submitCase()">상담 요청하기</button>
 </section>
 
-<!-- 닥터 로그인 -->
-<section class="section" id="doctor-login">
+<!-- Doctor Login -->
+<section id="doctor-login">
   <h2>닥터 모드 로그인</h2>
-  <input type="password" id="doctor-pin" maxlength="6" placeholder="6자리 PIN 입력" />
+  <input id="doctor-pin" type="password" maxlength="6" placeholder="PIN 입력" />
   <button class="upload-btn" onclick="doctorVerify()">로그인</button>
 </section>
 
-<!-- 닥터 패널 -->
-<section class="section" id="doctor-panel">
-  <h2>저장된 상담 케이스</h2>
+<!-- Doctor Panel -->
+<section id="doctor-panel">
+  <h2>상담 케이스 목록</h2>
   <div id="case-list"></div>
+
+  <div id="case-detail"></div>
 </section>
 
 <script>
+  /* Supabase 초기화 */
   const supabaseUrl = "https://mljhxswtlahjqexlxlwh.supabase.co";
   const supabaseKey = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
-  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  const supabase = supabase_createClient(supabaseUrl, supabaseKey);
 
+  function supabase_createClient(url, key) {
+    return supabase.createClient(url, key);
+  }
+
+  /* 화면 이동 */
   function openClient() {
-    document.getElementById("home-section").style.display = "block";
-    document.getElementById("upload-section").style.display = "none";
-    document.getElementById("doctor-login").style.display = "none";
-    document.getElementById("doctor-panel").style.display = "none";
+    show("home-section");
   }
 
   function openDoctor() {
-    document.getElementById("home-section").style.display = "none";
-    document.getElementById("upload-section").style.display = "none";
-    document.getElementById("doctor-login").style.display = "block";
+    show("doctor-login");
   }
 
   function openUpload(part) {
-    document.getElementById("home-section").style.display = "none";
-    document.getElementById("upload-section").style.display = "block";
-    document.getElementById("upload-title").innerText = `${part} 상담 업로드`;
+    show("upload-section");
+    document.getElementById("upload-title").innerText = part + " 상담 업로드";
+    window.currentPart = part;
   }
 
+  function show(id) {
+    document.getElementById("home-section").style.display = "none";
+    document.getElementById("upload-section").style.display = "none";
+    document.getElementById("doctor-login").style.display = "none";
+    document.getElementById("doctor-panel").style.display = "none";
+    document.getElementById(id).style.display = "block";
+  }
+
+  /* 파일 저장 */
+  async function uploadImage(caseId, type, file) {
+    if (!file) return null;
+
+    const filePath = `${caseId}/${type}-${file.name}`;
+    const { data, error } = await supabase
+      .storage
+      .from("uploads")
+      .upload(filePath, file);
+
+    if (error) {
+      console.log("upload error", error);
+      return null;
+    }
+
+    const url = `https://mljhxswtlahjqexlxlwh.supabase.co/storage/v1/object/public/uploads/${filePath}`;
+    return url;
+  }
+
+  /* 상담 등록 */
   async function submitCase() {
+    const concern = document.getElementById("concern").value;
+    const desired = document.getElementById("desired").value;
+    const changeLevel = document.getElementById("changeLevel").value;
     const history = document.getElementById("history").value;
 
-    const { data, error } = await supabaseClient
-      .from("cases")
-      .insert([{ history }]);
+    const caseId = crypto.randomUUID();
 
-    alert("상담이 정상적으로 접수되었습니다.");
+    let { data: caseData, error } = await supabase
+      .from("cases")
+      .insert([{
+        id: caseId,
+        part: window.currentPart,
+        partGroup: "Body",
+        concern,
+        desired,
+        changeLevel,
+        history,
+        status: "new"
+      }]);
+
+    const front = document.getElementById("front").files[0];
+    const left45 = document.getElementById("left45").files[0];
+    const right45 = document.getElementById("right45").files[0];
+    const back = document.getElementById("back").files[0];
+
+    const photos = {
+      front: await uploadImage(caseId, "front", front),
+      left45: await uploadImage(caseId, "left45", left45),
+      right45: await uploadImage(caseId, "right45", right45),
+      back: await uploadImage(caseId, "back", back),
+    };
+
+    for (let type in photos) {
+      if (!photos[type]) continue;
+      await supabase.from("photos").insert([{
+        id: crypto.randomUUID(),
+        case_id: caseId,
+        type,
+        url: photos[type]
+      }]);
+    }
+
+    await supabase.from("messages").insert([{
+      id: crypto.randomUUID(),
+      case_id: caseId,
+      from: "user",
+      text: concern,
+    }]);
+
+    alert("상담이 접수되었습니다.");
     openClient();
   }
 
+  /* 닥터 로그인 */
   function doctorVerify() {
     const pin = document.getElementById("doctor-pin").value;
-    if (pin === "123456") {
-      document.getElementById("doctor-login").style.display = "none";
-      document.getElementById("doctor-panel").style.display = "block";
+    if (pin === "112955") {
       loadCases();
+      show("doctor-panel");
     } else {
       alert("PIN이 올바르지 않습니다.");
     }
   }
 
+  /* 케이스 불러오기 */
   async function loadCases() {
-    const { data } = await supabaseClient.from("cases").select("*");
+    const { data: list } = await supabase
+      .from("cases")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     let html = "";
-    data.forEach(c => {
+    list.forEach(c => {
       html += `
-        <div class="chart-box">
-          <div><b>과거력:</b> ${c.history}</div>
+        <div class="case-box" onclick="openCase('${c.id}')">
+          <div><b>부위:</b> ${c.part}</div>
+          <div><b>고민:</b> ${c.concern}</div>
+          <div><b>상태:</b> ${c.status}</div>
         </div>
       `;
     });
-
     document.getElementById("case-list").innerHTML = html;
+  }
+
+  /* 케이스 상세 */
+  async function openCase(id) {
+    const { data: caseData } = await supabase
+      .from("cases")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    const { data: photoData } = await supabase
+      .from("photos")
+      .select("*")
+      .eq("case_id", id);
+
+    const { data: messages } = await supabase
+      .from("messages")
+      .select("*")
+      .eq("case_id", id)
+      .order("created_at");
+
+    let photosHtml = photoData
+      .map(p => `<div><b>${p.type}</b><br><img src="${p.url}" width="200"/></div>`)
+      .join("");
+
+    let msgHtml = messages
+      .map(m => `<div><b>${m.from}</b>: ${m.text}</div>`)
+      .join("");
+
+    document.getElementById("case-detail").innerHTML = `
+      <h3>상세 정보</h3>
+      <div><b>부위:</b> ${caseData.part}</div>
+      <div><b>원하는 느낌:</b> ${caseData.desired}</div>
+      <div><b>변화 수준:</b> ${caseData.changeLevel}</div>
+      <div><b>과거력:</b> ${caseData.history}</div>
+
+      <h3>사진</h3>
+      <div>${photosHtml}</div>
+
+      <h3>상담 메시지</h3>
+      <div>${msgHtml}</div>
+
+      <textarea id="doctorReply" placeholder="닥터 답변 입력"></textarea>
+      <button class="upload-btn" onclick="sendDoctorReply('${id}')">답변 보내기</button>
+    `;
+  }
+
+  /* 닥터 답변 */
+  async function sendDoctorReply(caseId) {
+    const text = document.getElementById("doctorReply").value;
+
+    await supabase.from("messages").insert([{
+      id: crypto.randomUUID(),
+      case_id: caseId,
+      from: "doctor",
+      text
+    }]);
+
+    await supabase
+      .from("cases")
+      .update({ status: "answered" })
+      .eq("id", caseId);
+
+    alert("답변이 전송되었습니다.");
+
+    openCase(caseId);
   }
 </script>
 
