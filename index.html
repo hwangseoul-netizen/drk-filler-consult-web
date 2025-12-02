@@ -1,973 +1,389 @@
-// App.js
-
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-} from "react-native";
-
-/* ==========================================================
-   카테고리 정의
-========================================================== */
-
-const CATEGORIES = [
-  {
-    title: "얼굴",
-    items: [
-      "코필러","콧대필러","코끝필러","보형물교정필러",
-      "이마필러","미간필러",
-      "눈밑필러","다크써클필러","애교필러",
-      "앞광대필러","옆볼필러","광대필러",
-      "팔자주름필러","입가주름필러","입꼬리필러",
-      "턱끝필러","무턱필러","턱라인필러",
-      "관자놀이필러",
-      "입술필러","윗입술필러","아랫입술필러",
-      "얼굴리쉐이핑필러","얼굴축소필러","얼굴비대칭필러",
-      "볼륨복원필러","중안면필러","눈가주름필러",
-    ],
-  },
-  {
-    title: "두상",
-    items: ["두상필러","뒤통수필러","정수리필러","헤어라인필러","귓볼필러","귀전체필러"],
-  },
-  {
-    title: "어깨 / 가슴",
-    items: ["어깨필러","어깨각도교정필러","쇄골필러","가슴필러","가슴볼륨필러","가슴골필러","보형물제거복원필러"],
-  },
-  {
-    title: "골반 / 힙",
-    items: ["골반필러","힙필러","힙전체필러","힙딥필러","힙리프팅필러","허리라인필러"],
-  },
-  {
-    title: "허벅지 / 다리",
-    items: ["허벅지필러","허벅지내측패임필러","무릎주름필러","다리필러","오다리보정필러","흰다리필러"],
-  },
-  {
-    title: "종아리 / 발",
-    items: ["종아리필러","발목필러","발등필러","발꿈치필러"],
-  },
-  {
-    title: "손",
-    items: ["손등필러","손주름필러","손볼륨필러"],
-  },
-];
-
-const allParts = CATEGORIES.flatMap((g) => g.items);
-
-/* 변화 레벨 */
-
-const CHANGE_LEVELS = [
-  { key: "light", label: "살짝 티만", desc: "본인만 느끼는 정도" },
-  { key: "standard", label: "확실하게", desc: "사진·영상에서 보이는 변화" },
-  { key: "full", label: "이미지 체인지", desc: "남들도 바로 느끼는 변화" },
-];
-
-const getChangeLabel = (key) => {
-  const found = CHANGE_LEVELS.find((c) => c.key === key);
-  return found ? found.label : "선택 안 함";
-};
-
-const findCategoryOf = (part) => {
-  for (const g of CATEGORIES) {
-    if (g.items.includes(part)) return g.title;
-  }
-  return "기타";
-};
-
-/* ==========================================================
-   메인 컴포넌트
-========================================================== */
-
-export default function App() {
-  // 모드: 사용자 / 닥터
-  const [adminMode, setAdminMode] = useState(false);
-
-  // 사용자 입력 상태
-  const [selectedGroup, setSelectedGroup] = useState(CATEGORIES[0].title);
-  const [selectedPart, setSelectedPart] = useState(null);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [concernText, setConcernText] = useState("");
-  const [desiredText, setDesiredText] = useState("");
-  const [refNote, setRefNote] = useState("");
-  const [changeLevel, setChangeLevel] = useState(null);
-
-  const [frontPhoto, setFrontPhoto] = useState("");
-  const [leftPhoto, setLeftPhoto] = useState("");
-  const [rightPhoto, setRightPhoto] = useState("");
-  const [backPhoto, setBackPhoto] = useState("");
-
-  const [submitMessage, setSubmitMessage] = useState("");
-
-  // 케이스 리스트
-  const [submissions, setSubmissions] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
-  const [doctorDraft, setDoctorDraft] = useState("");
-
-  const currentGroup = CATEGORIES.find((g) => g.title === selectedGroup);
-  const searchMatches =
-    searchKeyword.trim().length > 0
-      ? allParts.filter((p) => p.includes(searchKeyword.trim()))
-      : [];
-
-  const selectedCase =
-    submissions.find((c) => c.id === selectedCaseId) || null;
-
-  /* 유저가 상담 보내기 */
-
-  const handleSubmit = () => {
-    setSubmitMessage("");
-
-    if (!selectedPart) {
-      setSubmitMessage("관심 부위를 하나는 골라줘야 해.");
-      return;
-    }
-    if (!concernText.trim()) {
-      setSubmitMessage("어디가 어떻게 고민인지 한 줄이라도 적어줘.");
-      return;
-    }
-
-    const now = new Date().toISOString();
-
-    const firstMessageText = [
-      `부위: ${selectedPart} (${selectedGroup})`,
-      concernText.trim() && `고민: ${concernText.trim()}`,
-      desiredText.trim() && `원하는 모양: ${desiredText.trim()}`,
-      changeLevel && `변화 수준: ${getChangeLabel(changeLevel)}`,
-      refNote.trim() && `참고 전후/이미지 메모: ${refNote.trim()}`,
-      (frontPhoto || leftPhoto || rightPhoto || backPhoto) &&
-        "사진 정보: 정면/좌45/우45/후면 참고",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const newCase = {
-      id: Date.now().toString(),
-      createdAt: now,
-      partGroup: selectedGroup,
-      part: selectedPart,
-      concernText: concernText.trim(),
-      desiredText: desiredText.trim(),
-      refNote: refNote.trim(),
-      changeLevel,
-      photos: {
-        front: frontPhoto.trim(),
-        left45: leftPhoto.trim(),
-        right45: rightPhoto.trim(),
-        back: backPhoto.trim(),
-      },
-      status: "new", // new | answered
-      messages: [
-        {
-          id: "m_" + Date.now().toString(),
-          from: "user", // "user" | "doctor"
-          text: firstMessageText,
-          createdAt: now,
-        },
-      ],
-    };
-
-    setSubmissions((prev) => [newCase, ...prev]);
-
-    // 입력값 초기화
-    setConcernText("");
-    setDesiredText("");
-    setRefNote("");
-    setChangeLevel(null);
-    setFrontPhoto("");
-    setLeftPhoto("");
-    setRightPhoto("");
-    setBackPhoto("");
-
-    setSubmitMessage("문의가 접수됐어. 닥터케이가 순서대로 차근차근 답변해줄 거야.");
-  };
-
-  /* 닥터가 답변 보내기 (채팅 메시지 추가) */
-
-  const handleSendDoctorMessage = () => {
-    if (!selectedCase) return;
-    if (!doctorDraft.trim()) return;
-
-    const now = new Date().toISOString();
-    const newMsg = {
-      id: "d_" + Date.now().toString(),
-      from: "doctor",
-      text: doctorDraft.trim(),
-      createdAt: now,
-    };
-
-    setSubmissions((prev) =>
-      prev.map((c) =>
-        c.id === selectedCase.id
-          ? {
-              ...c,
-              status: "answered",
-              messages: [...c.messages, newMsg],
-            }
-          : c
-      )
-    );
-    setDoctorDraft("");
-  };
-
-  return (
-    <ScrollView style={styles.container}>
-      {/* 모드 토글 */}
-      <View style={styles.modeRow}>
-        <TouchableOpacity
-          style={[styles.modeBtn, !adminMode && styles.modeBtnActive]}
-          onPress={() => setAdminMode(false)}
-        >
-          <Text
-            style={[
-              styles.modeText,
-              !adminMode && styles.modeTextActive,
-            ]}
-          >
-            사용자 모드
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modeBtn, adminMode && styles.modeBtnActive]}
-          onPress={() => setAdminMode(true)}
-        >
-          <Text
-            style={[
-              styles.modeText,
-              adminMode && styles.modeTextActive,
-            ]}
-          >
-            닥터 모드
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* ================= 사용자 모드 ================= */}
-      {!adminMode && (
-        <>
-          <View style={styles.heroCard}>
-            <Text style={styles.heroTitle}>닥터케이 필러 상담</Text>
-            <Text style={styles.heroSubtitle}>
-              “이거 필러로 돼요? 얼마나 넣어야 해요?”{"\n"}
-              전신을 필러로 압도적으로 예술을 해온 닥터케이가{"\n"}
-              온라인에서 방향을 잡아주는 프리 상담이야. 놀랍지?{"\n"}
-              실시간 채팅은 아니지만,{" "}
-              <Text style={{ fontWeight: "700" }}>탑 티어 답변을 기다리는 맛</Text>이 있어!.
-            </Text>
-          </View>
-
-          {/* 1) 검색 + 부위 선택 */}
-          <View style={styles.card}>
-            <Text style={styles.blockTitle}>1단계 · 어디가 제일 고민이야?</Text>
-            <Text style={styles.smallLabel}>검색 키워드</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="예: 골반필러, 힙딥, 어깨, 가슴골, 손등…"
-              placeholderTextColor="#AAA"
-              value={searchKeyword}
-              onChangeText={setSearchKeyword}
-            />
-
-            {searchMatches.length > 0 && (
-              <View style={{ marginTop: 8 }}>
-                <Text style={styles.smallLabel}>
-                  이 키워드를 찾는 사람들이 많이 보는 부위
-                </Text>
-                <View style={styles.grid}>
-                  {searchMatches.slice(0, 8).map((p) => (
-                    <TouchableOpacity
-                      key={p}
-                      style={[
-                        styles.chip,
-                        selectedPart === p && styles.chipActive,
-                      ]}
-                      onPress={() => {
-                        setSelectedPart(p);
-                        setSelectedGroup(findCategoryOf(p));
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.chipText,
-                          selectedPart === p && styles.chipTextActive,
-                        ]}
-                      >
-                        {p}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.groupTabRow}
-            >
-              {CATEGORIES.map((g) => (
-                <TouchableOpacity
-                  key={g.title}
-                  style={[
-                    styles.groupTab,
-                    g.title === selectedGroup && styles.groupTabActive,
-                  ]}
-                  onPress={() => {
-                    setSelectedGroup(g.title);
-                    setSelectedPart(null);
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.groupTabText,
-                      g.title === selectedGroup && styles.groupTabTextActive,
-                    ]}
-                  >
-                    {g.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            {currentGroup && (
-              <View style={styles.grid}>
-                {currentGroup.items.map((item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={[
-                      styles.partBtn,
-                      selectedPart === item && styles.partBtnActive,
-                    ]}
-                    onPress={() => setSelectedPart(item)}
-                  >
-                    <Text
-                      style={[
-                        styles.partBtnText,
-                        selectedPart === item && styles.partBtnTextActive,
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-
-          {/* 2) 고민 / 원하는 모양 */}
-          <View style={styles.card}>
-            <Text style={styles.blockTitle}>2단계 · 지금 고민 + 원하는 모양</Text>
-
-            <Text style={styles.smallLabel}>지금 제일 거슬리는 부분</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="예: 골반이 너무 일자라서 레깅스핏이 안 예뻐요 / 어깨가 좁아서 상체가 답답해 보여요…"
-              placeholderTextColor="#AAA"
-              multiline
-              value={concernText}
-              onChangeText={setConcernText}
-            />
-
-            <Text style={[styles.smallLabel, { marginTop: 10 }]}>
-              바뀌었으면 하는 느낌·이미지
-            </Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="예: 골반은 살짝 넓어지고 힙은 자연스럽게 볼륨 / 손등은 나이티만 줄어든 정도…"
-              placeholderTextColor="#AAA"
-              multiline
-              value={desiredText}
-              onChangeText={setDesiredText}
-            />
-          </View>
-
-          {/* 3) 변화 수준 + 사진 슬롯 */}
-          <View style={styles.card}>
-            <Text style={styles.blockTitle}>3단계 · 어느 정도까지 바꾸고 싶어?</Text>
-            <View style={styles.changeRow}>
-              {CHANGE_LEVELS.map((c) => (
-                <TouchableOpacity
-                  key={c.key}
-                  style={[
-                    styles.changeBtn,
-                    changeLevel === c.key && styles.changeBtnActive,
-                  ]}
-                  onPress={() => setChangeLevel(c.key)}
-                >
-                  <Text
-                    style={[
-                      styles.changeText,
-                      changeLevel === c.key && styles.changeTextActive,
-                    ]}
-                  >
-                    {c.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <Text style={styles.smallLabel}>
-              참고 전후·이미지 설명 (URL이나 메모)
-            </Text>
-            <TextInput
-              style={[styles.input, styles.textAreaSmall]}
-              placeholder="예: 인스타에서 본 전후 느낌 / 본인이 보정한 후사진 설명 / 셀럽 이름·링크 등"
-              placeholderTextColor="#AAA"
-              multiline
-              value={refNote}
-              onChangeText={setRefNote}
-            />
-
-            <Text style={[styles.blockTitle, { marginTop: 10 }]}>
-              4단계 · 본인 사진 정보 (정면 / 좌45 / 우45 / 후면)
-            </Text>
-            <Text style={styles.smallLabel}>
-              지금은 URL이나 메모로만 적어줘도 괜찮아. (나중에 업로드 기능 연결)
-            </Text>
-
-            <Text style={styles.photoLabel}>정면</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="예: 정면 셀카 링크 / '정면 사진 보낼 예정'"
-              placeholderTextColor="#AAA"
-              value={frontPhoto}
-              onChangeText={setFrontPhoto}
-            />
-
-            <Text style={styles.photoLabel}>좌 45°</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="예: 왼쪽 45도 사진 링크 / 설명"
-              placeholderTextColor="#AAA"
-              value={leftPhoto}
-              onChangeText={setLeftPhoto}
-            />
-
-            <Text style={styles.photoLabel}>우 45°</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="예: 오른쪽 45도 사진 링크 / 설명"
-              placeholderTextColor="#AAA"
-              value={rightPhoto}
-              onChangeText={setRightPhoto}
-            />
-
-            <Text style={styles.photoLabel}>후면</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="예: 뒷모습 사진 링크 / 설명"
-              placeholderTextColor="#AAA"
-              value={backPhoto}
-              onChangeText={setBackPhoto}
-            />
-
-            {submitMessage ? (
-              <Text style={styles.submitMessage}>{submitMessage}</Text>
-            ) : null}
-
-            <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-              <Text style={styles.submitText}>닥터케이에게 보내기</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
-
-      {/* ================= 닥터 모드 ================= */}
-      {adminMode && (
-        <>
-          <View style={styles.heroCard}>
-            <Text style={styles.heroTitle}>닥터케이 대기함</Text>
-            <Text style={styles.heroSubtitle}>
-              전국에서 올라온 “이거 필러로 돼요?” 케이스들이야.{"\n"}
-              실시간 채팅은 아니고,{" "}
-              <Text style={{ fontWeight: "700" }}>
-                차트 보듯이 하나씩 열어서 답변 남기는 구조
-              </Text>
-              로 보면 돼.
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.blockTitle}>
-              대기 중 케이스 ({submissions.length}건)
-            </Text>
-            {submissions.length === 0 && (
-              <Text style={styles.smallLabel}>
-                아직 접수된 문의가 없어. 사용자 모드에서 먼저 한 번 테스트해봐도 좋아.
-              </Text>
-            )}
-
-            {submissions.map((c) => (
-              <TouchableOpacity
-                key={c.id}
-                style={[
-                  styles.caseCard,
-                  c.status === "new" && styles.caseCardNew,
-                  selectedCaseId === c.id && styles.caseCardSelected,
-                ]}
-                onPress={() => {
-                  setSelectedCaseId(c.id);
-                  setDoctorDraft("");
-                }}
-              >
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <Text style={styles.casePart}>
-                    {c.part}{" "}
-                    <Text style={styles.casePartGroup}>({c.partGroup})</Text>
-                  </Text>
-                  <Text style={styles.caseStatus}>
-                    {c.status === "new" ? "새 문의" : "답변 있음"}
-                  </Text>
-                </View>
-                <Text style={styles.caseMeta}>
-                  변화 수준: {getChangeLabel(c.changeLevel)}
-                </Text>
-                <Text style={styles.casePreview} numberOfLines={2}>
-                  {c.concernText || "—"}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {selectedCase && (
-            <View style={styles.card}>
-              <Text style={styles.blockTitle}>선택된 케이스</Text>
-              <Text style={styles.detailTitle}>
-                {selectedCase.part}{" "}
-                <Text style={styles.casePartGroup}>
-                  ({selectedCase.partGroup})
-                </Text>
-              </Text>
-              <Text style={styles.detailLabel}>
-                변화 수준: {getChangeLabel(selectedCase.changeLevel)}
-              </Text>
-
-              <Text style={[styles.detailLabel, { marginTop: 8 }]}>고민</Text>
-              <Text style={styles.detailBody}>
-                {selectedCase.concernText || "—"}
-              </Text>
-
-              <Text style={[styles.detailLabel, { marginTop: 8 }]}>
-                원하는 모양·분위기
-              </Text>
-              <Text style={styles.detailBody}>
-                {selectedCase.desiredText || "—"}
-              </Text>
-
-              <Text style={[styles.detailLabel, { marginTop: 8 }]}>
-                참고 전후·이미지 메모
-              </Text>
-              <Text style={styles.detailBody}>
-                {selectedCase.refNote || "—"}
-              </Text>
-
-              {/* 사진 정보 4개 */}
-              <Text style={[styles.blockTitle, { marginTop: 10 }]}>
-                사진 정보 (정면 / 좌45 / 우45 / 후면)
-              </Text>
-              <View style={styles.photoInfoRow}>
-                <View style={styles.photoInfoBox}>
-                  <Text style={styles.photoInfoLabel}>정면</Text>
-                  <Text style={styles.photoInfoText}>
-                    {selectedCase.photos?.front || "—"}
-                  </Text>
-                </View>
-                <View style={styles.photoInfoBox}>
-                  <Text style={styles.photoInfoLabel}>좌 45°</Text>
-                  <Text style={styles.photoInfoText}>
-                    {selectedCase.photos?.left45 || "—"}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.photoInfoRow}>
-                <View style={styles.photoInfoBox}>
-                  <Text style={styles.photoInfoLabel}>우 45°</Text>
-                  <Text style={styles.photoInfoText}>
-                    {selectedCase.photos?.right45 || "—"}
-                  </Text>
-                </View>
-                <View style={styles.photoInfoBox}>
-                  <Text style={styles.photoInfoLabel}>후면</Text>
-                  <Text style={styles.photoInfoText}>
-                    {selectedCase.photos?.back || "—"}
-                  </Text>
-                </View>
-              </View>
-
-              {/* 채팅 메시지 */}
-              <Text style={[styles.blockTitle, { marginTop: 10 }]}>
-                케이스 대화 내역
-              </Text>
-              <View style={styles.chatBox}>
-                {selectedCase.messages.map((m) => (
-                  <View
-                    key={m.id}
-                    style={[
-                      styles.chatBubble,
-                      m.from === "doctor"
-                        ? styles.chatBubbleDoctor
-                        : styles.chatBubbleUser,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.chatText,
-                        m.from === "doctor" && styles.chatTextDoctor,
-                      ]}
-                    >
-                      {m.text}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-
-              <Text style={[styles.detailLabel, { marginTop: 10 }]}>
-                닥터케이 답변 추가
-              </Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="예: 필러로 어느 정도까지 가능한지, 예상 볼륨 존(대략), 난이도, 주의점 등을 적어줘."
-                placeholderTextColor="#AAA"
-                multiline
-                value={doctorDraft}
-                onChangeText={setDoctorDraft}
-              />
-
-              <TouchableOpacity
-                style={styles.submitBtn}
-                onPress={handleSendDoctorMessage}
-              >
-                <Text style={styles.submitText}>닥터 답변 보내기</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </>
-      )}
-    </ScrollView>
-  );
-}
-
-/* ==========================================================
-   스타일
-========================================================== */
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F7FA",
-    paddingHorizontal: 18,
-    paddingTop: 20,
-  },
-
-  /* 모드 토글 */
-  modeRow: {
-    flexDirection: "row",
-    marginBottom: 10,
-  },
-  modeBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#E0E0EA",
-    backgroundColor: "#FFFFFF",
-    marginRight: 6,
-    alignItems: "center",
-  },
-  modeBtnActive: {
-    backgroundColor: "#4EA8DE",
-    borderColor: "#4EA8DE",
-  },
-  modeText: {
-    fontSize: 13,
-    color: "#555",
-    fontWeight: "600",
-  },
-  modeTextActive: {
-    color: "#FFF",
-  },
-
-  /* 카드 공통 */
-  heroCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 12,
-  },
-  heroTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#222",
-    marginBottom: 6,
-  },
-  heroSubtitle: {
-    fontSize: 13,
-    color: "#555",
-    lineHeight: 18,
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 12,
-  },
-  blockTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: 6,
-  },
-  smallLabel: {
-    fontSize: 12,
-    color: "#777",
-    marginBottom: 4,
-  },
-  input: {
-    backgroundColor: "#F3F3F7",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 13,
-    color: "#222",
-  },
-  textArea: {
-    height: 90,
-    textAlignVertical: "top",
-    marginTop: 4,
-  },
-  textAreaSmall: {
-    height: 70,
-    textAlignVertical: "top",
-    marginTop: 4,
-  },
-
-  /* 카테고리 탭/칩 */
-  groupTabRow: {
-    marginTop: 10,
-    marginBottom: 6,
-  },
-  groupTab: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    backgroundColor: "#EDEDF2",
-    marginRight: 8,
-  },
-  groupTabActive: {
-    backgroundColor: "#4EA8DE",
-  },
-  groupTabText: {
-    fontSize: 13,
-    color: "#555",
-    fontWeight: "500",
-  },
-  groupTabTextActive: {
-    color: "#FFF",
-    fontWeight: "700",
-  },
-
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  chip: {
-    backgroundColor: "#F3F3F7",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginRight: 6,
-    marginBottom: 6,
-  },
-  chipActive: {
-    backgroundColor: "#FFE4F2",
-  },
-  chipText: {
-    fontSize: 12,
-    color: "#555",
-  },
-  chipTextActive: {
-    color: "#C92576",
-    fontWeight: "700",
-  },
-
-  partBtn: {
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    marginRight: 6,
-    marginBottom: 6,
-    borderWidth: 1,
-    borderColor: "#E2E2E8",
-  },
-  partBtnActive: {
-    borderColor: "#4EA8DE",
-    backgroundColor: "#E7F3FF",
-  },
-  partBtnText: {
-    color: "#555",
-    fontSize: 13,
-  },
-  partBtnTextActive: {
-    color: "#1B6EA8",
-    fontWeight: "700",
-  },
-
-  /* 변화 수준 */
-  changeRow: {
-    flexDirection: "row",
-    marginBottom: 10,
-  },
-  changeBtn: {
-    flex: 1,
-    backgroundColor: "#F3F3F7",
-    borderRadius: 999,
-    paddingVertical: 8,
-    alignItems: "center",
-    marginRight: 6,
-  },
-  changeBtnActive: {
-    backgroundColor: "#FF4FA3",
-  },
-  changeText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#333",
-  },
-  changeTextActive: {
-    color: "#FFF",
-  },
-
-  photoLabel: {
-    marginTop: 8,
-    fontSize: 12,
-    color: "#777",
-  },
-
-  submitBtn: {
-    marginTop: 10,
-    backgroundColor: "#FF4FA3",
-    borderRadius: 999,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  submitText: {
-    color: "#FFF",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-  submitMessage: {
-    marginTop: 6,
-    fontSize: 12,
-    color: "#007700",
-  },
-
-  /* 케이스 리스트 */
-  caseCard: {
-    backgroundColor: "#F5F5FA",
-    borderRadius: 14,
-    padding: 10,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E0E0EA",
-  },
-  caseCardNew: {
-    borderColor: "#FF4FA3",
-  },
-  caseCardSelected: {
-    borderColor: "#4EA8DE",
-  },
-  casePart: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#222",
-  },
-  casePartGroup: {
-    fontSize: 11,
-    color: "#777",
-  },
-  caseStatus: {
-    fontSize: 11,
-    color: "#FF4FA3",
-    fontWeight: "700",
-  },
-  caseMeta: {
-    fontSize: 11,
-    color: "#666",
-    marginTop: 2,
-  },
-  casePreview: {
-    fontSize: 12,
-    color: "#555",
-    marginTop: 4,
-  },
-
-  /* 상세/채팅/사진 정보 */
-  detailTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#222",
-    marginBottom: 4,
-  },
-  detailLabel: {
-    fontSize: 12,
-    color: "#777",
-  },
-  detailBody: {
-    fontSize: 13,
-    color: "#333",
-    marginTop: 2,
-  },
-
-  photoInfoRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 4,
-  },
-  photoInfoBox: {
-    flex: 1,
-    backgroundColor: "#F3F3F7",
-    borderRadius: 10,
-    padding: 8,
-  },
-  photoInfoLabel: {
-    fontSize: 11,
-    color: "#777",
-    marginBottom: 2,
-  },
-  photoInfoText: {
-    fontSize: 12,
-    color: "#333",
-  },
-
-  chatBox: {
-    marginTop: 4,
-    backgroundColor: "#F3F3F7",
-    borderRadius: 12,
-    padding: 8,
-  },
-  chatBubble: {
-    maxWidth: "85%",
-    borderRadius: 10,
-    padding: 8,
-    marginBottom: 6,
-  },
-  chatBubbleUser: {
-    backgroundColor: "#FFFFFF",
-    alignSelf: "flex-start",
-  },
-  chatBubbleDoctor: {
-    backgroundColor: "#4EA8DE",
-    alignSelf: "flex-end",
-  },
-  chatText: {
-    fontSize: 12,
-    color: "#333",
-  },
-  chatTextDoctor: {
-    color: "#FFF",
-  },
-});
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr.K Aesthetic - Private Consultation</title>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #1B2A41;   /* 미드나잇 네이비 */
+            --secondary: #D4A5A5; /* 톤다운 로즈 */
+            --bg: #F8F9FA;
+            --card: #FFFFFF;
+            --text-main: #1F1F1F;
+            --text-sub: #707070;
+            --border: #EAEAEA;
+            --input-bg: #FAFAFA;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        
+        body { background-color: var(--bg); color: var(--text-main); -webkit-font-smoothing: antialiased; }
+
+        /* 공통 레이아웃 */
+        .app-container { max-width: 600px; margin: 0 auto; background: var(--bg); min-height: 100vh; position: relative; }
+        .container { padding: 20px; padding-bottom: 80px; }
+
+        /* 헤더 */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-title { font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        .header-subtitle { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+        
+        .mode-switch {
+            padding: 6px 12px; border-radius: 20px; background: #F0F0F5; border: none; cursor: pointer;
+            font-size: 12px; font-weight: 600; color: #888; transition: 0.3s;
+        }
+        .mode-switch.active { background: var(--primary); color: #FFF; }
+
+        /* 히어로 섹션 */
+        .hero-section { margin: 24px 0; }
+        .hero-main { font-size: 24px; font-weight: 700; color: var(--text-main); line-height: 1.4; margin-bottom: 8px; }
+        .highlight { color: var(--secondary); }
+        .hero-sub { font-size: 14px; color: var(--text-sub); line-height: 1.6; }
+
+        /* 카드 스타일 */
+        .card {
+            background: var(--card); border-radius: 20px; padding: 24px; margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--border);
+        }
+        .card-header { display: flex; align-items: center; margin-bottom: 16px; }
+        .step-badge {
+            font-size: 10px; font-weight: 800; color: var(--secondary); background: #FFF0F0;
+            padding: 4px 8px; border-radius: 6px; margin-right: 8px;
+        }
+        .card-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
+
+        /* 인풋 & 버튼 */
+        input, textarea {
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px; font-size: 15px; color: var(--text-main);
+            outline: none; transition: 0.2s; margin-bottom: 12px;
+        }
+        input:focus, textarea:focus { border-color: var(--secondary); }
+        textarea { resize: none; height: 100px; }
+        .label { font-size: 14px; font-weight: 600; margin: 8px 0; display: block; }
+        .helper { font-size: 12px; color: #999; margin-bottom: 8px; display: block; }
+
+        /* 칩 & 탭 */
+        .tab-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 10px; scrollbar-width: none; }
+        .tab-scroll::-webkit-scrollbar { display: none; }
+        .tab-item {
+            white-space: nowrap; padding: 8px 16px; border-radius: 24px; background: #F0F2F5;
+            color: #666; font-size: 14px; font-weight: 500; cursor: pointer; border: none;
+        }
+        .tab-item.selected { background: var(--primary); color: #FFF; font-weight: 700; }
+
+        .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: #FFF;
+            font-size: 14px; color: #555; cursor: pointer; transition: 0.2s;
+        }
+        .chip:hover { background: #FAFAFA; }
+        .chip.selected { border-color: var(--secondary); background: #FFF5F8; color: #D45D79; font-weight: 600; }
+
+        /* 레벨 버튼 */
+        .level-row { display: flex; gap: 8px; margin-bottom: 20px; }
+        .level-btn {
+            flex: 1; background: #FFF; border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 4px; text-align: center; cursor: pointer;
+        }
+        .level-btn.selected { border-color: var(--secondary); background: #FFF5F8; }
+        .level-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .level-btn.selected .level-title { color: #D45D79; }
+        .level-desc { font-size: 11px; color: #999; }
+
+        /* 메인 버튼 */
+        .main-btn {
+            width: 100%; background: var(--primary); color: #FFF; font-size: 16px; font-weight: 700;
+            padding: 18px; border-radius: 14px; border: none; cursor: pointer; margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
+        }
+        .main-btn:active { transform: scale(0.98); }
+        .submit-msg { margin-top: 12px; font-size: 14px; color: #2ECC71; text-align: center; font-weight: 600; }
+
+        /* 닥터 모드 리스트 */
+        .case-item {
+            background: #FFF; border-radius: 12px; padding: 16px; margin-bottom: 10px; border: 1px solid #EEE; cursor: pointer;
+        }
+        .case-item.new { border-color: var(--secondary); background: #FFFBFB; }
+        .case-item.selected { border: 2px solid var(--primary); }
+        .case-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .case-part { font-size: 16px; font-weight: 700; color: #333; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .badge.new { background: #FFE5EC; color: #FF4081; }
+        .badge.done { background: #E8F5E9; color: #2E7D32; }
+        
+        /* 채팅 말풍선 */
+        .chat-box { background: #F8F9FA; border-radius: 16px; padding: 16px; min-height: 150px; margin-bottom: 16px; }
+        .bubble { max-width: 80%; padding: 12px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .bubble.user { background: #FFF; align-self: flex-start; border: 1px solid var(--border); border-top-left-radius: 0; float: left; clear: both; }
+        .bubble.doctor { background: var(--primary); color: #FFF; align-self: flex-end; border-top-right-radius: 0; float: right; clear: both; }
+        .clearfix::after { content: ""; display: table; clear: both; }
+
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        /* 데이터 정의 */
+        const CATEGORIES = [
+            { title: "얼굴", items: ["코필러","콧대","코끝","이마","미간","눈밑","앞광대","옆볼","팔자주름","입가주름","입꼬리","턱끝","무턱","턱라인","관자놀이","입술","얼굴축소","중안면"] },
+            { title: "두상", items: ["두상","뒤통수","정수리","헤어라인"] },
+            { title: "어깨/가슴", items: ["어깨","쇄골","가슴볼륨","가슴골"] },
+            { title: "골반/힙", items: ["골반","힙딥","힙업","허리라인"] },
+            { title: "다리", items: ["허벅지","무릎","종아리","발목"] }
+        ];
+        const allParts = CATEGORIES.flatMap(g => g.items);
+        const CHANGE_LEVELS = [
+            { key: "light", label: "자연스럽게", desc: "나만 아는 미세 교정" },
+            { key: "standard", label: "확실하게", desc: "사진에서 티나는 변화" },
+            { key: "full", label: "화려하게", desc: "이미지 대변신" }
+        ];
+
+        /* 메인 앱 컴포넌트 */
+        function App() {
+            const [adminMode, setAdminMode] = useState(false);
+            
+            // 사용자 State
+            const [selectedGroup, setSelectedGroup] = useState(CATEGORIES[0].title);
+            const [selectedPart, setSelectedPart] = useState(null);
+            const [searchKeyword, setSearchKeyword] = useState("");
+            const [concern, setConcern] = useState("");
+            const [desired, setDesired] = useState("");
+            const [refNote, setRefNote] = useState("");
+            const [level, setLevel] = useState(null);
+            const [msg, setMsg] = useState("");
+
+            // 닥터 State
+            const [submissions, setSubmissions] = useState([]);
+            const [selectedCaseId, setSelectedCaseId] = useState(null);
+            const [doctorDraft, setDoctorDraft] = useState("");
+
+            const currentGroup = CATEGORIES.find(g => g.title === selectedGroup);
+            const searchMatches = searchKeyword.trim().length > 0 
+                ? allParts.filter(p => p.includes(searchKeyword.trim())) : [];
+            const selectedCase = submissions.find(c => c.id === selectedCaseId);
+
+            // 상담 접수 핸들러
+            const handleSubmit = () => {
+                setMsg("");
+                if(!selectedPart) { setMsg("❗ 시술 부위를 선택해주세요."); return; }
+                if(!concern.trim()) { setMsg("❗ 고민 내용을 적어주세요."); return; }
+
+                const newCase = {
+                    id: Date.now().toString(),
+                    createdAt: new Date(),
+                    part: selectedPart,
+                    group: selectedGroup,
+                    concern, desired, refNote, level,
+                    status: "new",
+                    messages: [{ id: "m_"+Date.now(), from: "user", text: `[문의] ${selectedPart}\n고민: ${concern}` }]
+                };
+                setSubmissions([newCase, ...submissions]);
+                // 초기화
+                setConcern(""); setDesired(""); setRefNote(""); setLevel(null);
+                setMsg("✅ 상담이 접수되었습니다. 닥터케이가 분석해드릴게요.");
+            };
+
+            // 닥터 답변 핸들러
+            const handleDoctorReply = () => {
+                if(!selectedCase || !doctorDraft.trim()) return;
+                const newMsg = { id: "d_"+Date.now(), from: "doctor", text: doctorDraft };
+                
+                setSubmissions(prev => prev.map(c => 
+                    c.id === selectedCase.id 
+                    ? { ...c, status: "answered", messages: [...c.messages, newMsg] } 
+                    : c
+                ));
+                setDoctorDraft("");
+            };
+
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <div>
+                            <div className="header-title">Dr.K Aesthetic</div>
+                            <div className="header-subtitle">Personal Consultation</div>
+                        </div>
+                        <button 
+                            className={`mode-switch ${adminMode ? 'active' : ''}`} 
+                            onClick={() => setAdminMode(!adminMode)}
+                        >
+                            {adminMode ? "Doctor" : "Client"}
+                        </button>
+                    </header>
+
+                    <div className="container">
+                        {!adminMode ? (
+                            // === 사용자 모드 ===
+                            <>
+                                <div className="hero-section">
+                                    <div className="hero-main">
+                                        나만의 라인을 찾는<br/>
+                                        <span className="highlight">닥터케이</span> 프라이빗 상담
+                                    </div>
+                                    <div className="hero-sub">
+                                        전신 필러 아티스트가 당신의 고민을 분석합니다.<br/>
+                                        비대면으로 편안하게 상담받아보세요.
+                                    </div>
+                                </div>
+
+                                {/* Step 1 */}
+                                <div className="card">
+                                    <div className="card-header">
+                                        <span className="step-badge">STEP 1</span>
+                                        <span className="card-title">어디가 고민이세요?</span>
+                                    </div>
+                                    <input 
+                                        type="text" placeholder="🔍 예: 힙딥, 직각어깨, 팔자주름..." 
+                                        value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)}
+                                    />
+                                    
+                                    {searchMatches.length > 0 && (
+                                        <div className="chip-grid" style={{marginBottom: '15px'}}>
+                                            {searchMatches.slice(0,5).map(p => (
+                                                <div key={p} className={`chip ${selectedPart === p ? 'selected' : ''}`}
+                                                    onClick={() => { setSelectedPart(p); setSearchKeyword(""); }}
+                                                >
+                                                    {p}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="tab-scroll">
+                                        {CATEGORIES.map(g => (
+                                            <button key={g.title} 
+                                                className={`tab-item ${selectedGroup === g.title ? 'selected' : ''}`}
+                                                onClick={() => { setSelectedGroup(g.title); setSelectedPart(null); }}
+                                            >
+                                                {g.title}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    
+                                    <div className="chip-grid">
+                                        {currentGroup.items.map(item => (
+                                            <div key={item} 
+                                                className={`chip ${selectedPart === item ? 'selected' : ''}`}
+                                                onClick={() => setSelectedPart(item)}
+                                            >
+                                                {item}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Step 2 */}
+                                <div className="card">
+                                    <div className="card-header">
+                                        <span className="step-badge">STEP 2</span>
+                                        <span className="card-title">디테일 작성</span>
+                                    </div>
+                                    <label className="label">현재 고민</label>
+                                    <textarea placeholder="예: 골반 라인이 울퉁불퉁해요." value={concern} onChange={e => setConcern(e.target.value)}></textarea>
+                                    
+                                    <label className="label">원하는 느낌</label>
+                                    <textarea placeholder="예: 자연스럽고 매끄럽게..." style={{height:'60px'}} value={desired} onChange={e => setDesired(e.target.value)}></textarea>
+                                </div>
+
+                                {/* Step 3 */}
+                                <div className="card">
+                                    <div className="card-header">
+                                        <span className="step-badge">STEP 3</span>
+                                        <span className="card-title">강도 선택</span>
+                                    </div>
+                                    <div className="level-row">
+                                        {CHANGE_LEVELS.map(lv => (
+                                            <div key={lv.key} 
+                                                className={`level-btn ${level === lv.key ? 'selected' : ''}`}
+                                                onClick={() => setLevel(lv.key)}
+                                            >
+                                                <div className="level-title">{lv.label}</div>
+                                                <div className="level-desc">{lv.desc}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <label className="label">참고 URL / 메모</label>
+                                    <input type="text" placeholder="인스타 링크 등" value={refNote} onChange={e => setRefNote(e.target.value)} />
+
+                                    {msg && <div className="submit-msg">{msg}</div>}
+                                    <button className="main-btn" onClick={handleSubmit}>상담 신청하기</button>
+                                </div>
+                            </>
+                        ) : (
+                            // === 닥터 모드 ===
+                            <>
+                                <div className="hero-section">
+                                    <div className="hero-main">Doctor's Desk</div>
+                                    <div className="hero-sub">대기 중인 케이스: <b>{submissions.length}건</b></div>
+                                </div>
+
+                                <div className="card">
+                                    <div className="card-title" style={{marginBottom:'15px'}}>대기 리스트</div>
+                                    {submissions.length === 0 && <div style={{textAlign:'center', color:'#999'}}>접수된 상담이 없습니다.</div>}
+                                    
+                                    {submissions.map(c => (
+                                        <div key={c.id} 
+                                            className={`case-item ${c.status === 'new' ? 'new' : ''} ${selectedCaseId === c.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedCaseId(c.id)}
+                                        >
+                                            <div className="case-header">
+                                                <div className="case-part">{c.part} <span style={{fontSize:'12px', fontWeight:'400', color:'#888'}}>| {c.group}</span></div>
+                                                <span className={`badge ${c.status === 'new' ? 'new' : 'done'}`}>
+                                                    {c.status === 'new' ? 'NEW' : '완료'}
+                                                </span>
+                                            </div>
+                                            <div style={{fontSize:'13px', color:'#666'}}>{c.concern}</div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {selectedCase && (
+                                    <div className="card">
+                                        <div className="card-title" style={{marginBottom:'10px'}}>{selectedCase.part} 상담</div>
+                                        <div style={{fontSize:'14px', marginBottom:'15px', color:'#555'}}>
+                                            <b>고민:</b> {selectedCase.concern}<br/>
+                                            <b>원하는 느낌:</b> {selectedCase.desired || '-'}<br/>
+                                            <b>강도:</b> {CHANGE_LEVELS.find(l=>l.key===selectedCase.level)?.label || '-'}
+                                        </div>
+
+                                        <div className="chat-box clearfix">
+                                            {selectedCase.messages.map(m => (
+                                                <div key={m.id} className={`bubble ${m.from}`}>
+                                                    {m.text}
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <label className="label">닥터 답변 작성</label>
+                                        <textarea value={doctorDraft} onChange={e => setDoctorDraft(e.target.value)} placeholder="분석 내용을 입력하세요..."></textarea>
+                                        <button className="main-btn" onClick={handleDoctorReply}>답변 전송</button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
