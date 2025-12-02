@@ -2,26 +2,26 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>닥터케이 필러 상담</title>
+  <title>Dr.K Lab · 필러 온라인 상담</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --bg: #f4f5fb;
+      --bg: #f3f1ec;
       --card: #ffffff;
-      --border-soft: #e5e7eb;
-      --border-strong: #cbd5f5;
-      --text-main: #111827;
+      --border-soft: #e2e0da;
+      --border-strong: #c8bca5;
+      --text-main: #18181b;
       --text-sub: #6b7280;
-      --accent: #2563eb;
-      --accent-soft: #eff6ff;
-      --accent-strong: #1d4ed8;
-      --danger: #dc2626;
-      --badge-new: #e0f2fe;
+      --accent: #b08b4f;        /* 샌드 골드 */
+      --accent-soft: #f4ead6;
+      --accent-deep: #7a5a2a;
+      --danger: #b91c1c;
+      --badge-new-bg: #e0f2fe;
       --badge-new-text: #075985;
-      --badge-inprog: #fef9c3;
-      --badge-inprog-text: #854d0e;
-      --badge-ans: #dcfce7;
-      --badge-ans-text: #166534;
+      --badge-mid-bg: #fef9c3;
+      --badge-mid-text: #854d0e;
+      --badge-done-bg: #dcfce7;
+      --badge-done-text: #166534;
     }
 
     * {
@@ -41,15 +41,18 @@
       padding: 0 16px;
     }
 
+    /* HEADER */
+
     .header-card {
       background: var(--card);
       border-radius: 18px;
-      padding: 16px 20px;
+      padding: 16px 18px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+      gap: 14px;
       border: 1px solid var(--border-soft);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     }
 
     .header-left {
@@ -57,45 +60,59 @@
       align-items: center;
       gap: 14px;
       min-width: 0;
+      flex: 1;
     }
 
-    .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #dbeafe, #1d4ed8);
+    .logo-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      background: linear-gradient(145deg, #f7f3eb, #e5dccb);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 20px;
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
       flex-shrink: 0;
+      box-shadow: 0 8px 16px rgba(120, 98, 58, 0.35);
     }
 
-    .header-text-main {
+    .logo-k {
       font-weight: 800;
-      font-size: 20px;
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: var(--accent-deep);
+    }
+
+    .logo-text-block {
+      min-width: 0;
+    }
+
+    .brand-line {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       margin-bottom: 2px;
       white-space: nowrap;
     }
 
-    .header-text-sub {
-      font-size: 13px;
+    .brand-sub {
+      font-size: 12px;
       color: var(--text-sub);
-      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 4px;
     }
 
-    .header-copy {
-      font-size: 13px;
+    .brand-copy {
+      font-size: 12px;
       color: var(--text-sub);
-      margin-top: 4px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    .header-copy strong {
+    .brand-copy strong {
       color: var(--text-main);
+      font-weight: 600;
     }
 
     .header-right {
@@ -103,14 +120,12 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 8px;
-      margin-left: 12px;
       flex-shrink: 0;
     }
 
     .mode-toggle {
       display: inline-flex;
-      align-items: center;
-      background: #f3f4f6;
+      background: #f4f4f5;
       border-radius: 999px;
       padding: 3px;
       border: 1px solid var(--border-soft);
@@ -126,21 +141,20 @@
       color: var(--text-sub);
       cursor: pointer;
       transition: background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
     }
 
     .mode-btn--active {
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #111827;
+      color: #f9fafb;
     }
 
-    .hint-pill {
+    .header-hint {
       font-size: 11px;
-      color: #4b5563;
-      background: #e5e7eb;
-      padding: 3px 8px;
-      border-radius: 999px;
+      color: var(--text-sub);
     }
+
+    /* MAIN COMMON */
 
     main {
       margin-top: 18px;
@@ -149,9 +163,9 @@
     .card {
       background: var(--card);
       border-radius: 18px;
-      padding: 18px 18px 20px;
+      padding: 16px 16px 18px;
       border: 1px solid var(--border-soft);
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.03);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
     }
 
     .card + .card {
@@ -159,7 +173,7 @@
     }
 
     .section-title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
       margin-bottom: 4px;
     }
@@ -168,6 +182,7 @@
       font-size: 13px;
       color: var(--text-sub);
       margin-bottom: 12px;
+      line-height: 1.5;
     }
 
     label {
@@ -192,8 +207,9 @@
       padding: 9px 11px;
       font-size: 14px;
       font-family: inherit;
-      resize: vertical;
+      background: #f8f7f3;
       min-height: 40px;
+      resize: vertical;
     }
 
     .textarea {
@@ -205,11 +221,12 @@
     select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 1px rgba(176, 139, 79, 0.2);
+      background: #fefdf9;
     }
 
     select {
-      background: #ffffff;
+      background: #f8f7f3;
     }
 
     .field-row {
@@ -224,54 +241,67 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .file-row label {
       margin-bottom: 0;
-      min-width: 48px;
-      font-size: 13px;
+      min-width: 54px;
+      font-size: 12px;
       font-weight: 600;
     }
 
     .file-input {
       flex: 1;
       font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: #f8f7f3;
+    }
+
+    .file-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(176, 139, 79, 0.2);
+      background: #fefdf9;
     }
 
     .primary-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
       border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       border: none;
-      color: #ffffff;
+      background: #111827;
+      color: #f9fafb;
       font-size: 15px;
       font-weight: 700;
       padding: 11px 24px;
       cursor: pointer;
-      width: 100%;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+      letter-spacing: 0.03em;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.08s ease;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.45);
     }
 
     .primary-button:disabled {
-      opacity: 0.65;
-      cursor: default;
+      opacity: 0.55;
       box-shadow: none;
+      cursor: default;
       transform: none;
     }
 
     .primary-button:not(:disabled):hover {
       transform: translateY(-1px);
-      box-shadow: 0 13px 24px rgba(37, 99, 235, 0.42);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.55);
     }
 
     .helper {
       font-size: 12px;
       color: var(--text-sub);
       margin-top: 8px;
+      line-height: 1.5;
     }
 
     .helper.small {
@@ -280,25 +310,28 @@
 
     #submit-state {
       font-size: 12px;
-      color: var(--accent-strong);
+      color: var(--accent-deep);
       margin-top: 6px;
+    }
+
+    .status-bar {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-sub);
+      min-height: 16px;
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* Doctor layout */
+    /* DOCTOR MODE LAYOUT */
 
     .doctor-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.3fr);
       gap: 16px;
       margin-top: 10px;
-    }
-
-    .doctor-intro {
-      margin-bottom: 10px;
     }
 
     .doctor-toolbar {
@@ -306,12 +339,12 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     .pill-group {
       display: inline-flex;
-      background: #f3f4f6;
+      background: #f4f4f5;
       border-radius: 999px;
       padding: 3px;
       border: 1px solid var(--border-soft);
@@ -321,24 +354,24 @@
       border: none;
       background: transparent;
       border-radius: 999px;
-      padding: 5px 12px;
+      padding: 5px 10px;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-sub);
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .pill-button--active {
-      background: #ffffff;
-      color: var(--accent-strong);
-      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.5);
+      background: #111827;
+      color: #f9fafb;
     }
 
     .ghost-button {
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       padding: 6px 12px;
-      background: #ffffff;
+      background: #f8f7f3;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-sub);
@@ -346,11 +379,19 @@
     }
 
     .ghost-button:hover {
-      background: #f9fafb;
+      background: #ede9dd;
+    }
+
+    .case-list-wrapper {
+      padding: 10px 10px 10px;
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.03);
     }
 
     .case-list {
-      max-height: 520px;
+      max-height: 480px;
       overflow-y: auto;
       padding-right: 2px;
     }
@@ -358,13 +399,13 @@
     .case-row {
       width: 100%;
       border-radius: 12px;
-      padding: 10px 12px;
+      padding: 10px 11px;
       border: 1px solid var(--border-soft);
-      background: #ffffff;
+      background: #fefdf9;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       cursor: pointer;
       margin-bottom: 8px;
       text-align: left;
@@ -372,8 +413,8 @@
 
     .case-row--active {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
       background: var(--accent-soft);
+      box-shadow: 0 0 0 1px rgba(176, 139, 79, 0.35);
     }
 
     .case-row-main {
@@ -382,7 +423,7 @@
     }
 
     .case-row-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       margin-bottom: 2px;
       white-space: nowrap;
@@ -403,7 +444,7 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 4px;
-      margin-left: 6px;
+      margin-left: 4px;
       flex-shrink: 0;
     }
 
@@ -417,20 +458,20 @@
     }
 
     .badge--status-new {
-      background: var(--badge-new);
+      background: var(--badge-new-bg);
       color: var(--badge-new-text);
       border-color: #bae6fd;
     }
 
     .badge--status-in_progress {
-      background: var(--badge-inprog);
-      color: var(--badge-inprog-text);
+      background: var(--badge-mid-bg);
+      color: var(--badge-mid-text);
       border-color: #facc15;
     }
 
     .badge--status-answered {
-      background: var(--badge-ans);
-      color: var(--badge-ans-text);
+      background: var(--badge-done-bg);
+      color: var(--badge-done-text);
       border-color: #22c55e;
     }
 
@@ -440,7 +481,7 @@
       padding: 14px 12px;
       font-size: 13px;
       color: var(--text-sub);
-      background: #f9fafb;
+      background: #f7f5f0;
     }
 
     .detail-header {
@@ -475,7 +516,7 @@
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid var(--border-soft);
-      background: #f9fafb;
+      background: #f8f7f3;
     }
 
     .detail-field p {
@@ -502,8 +543,8 @@
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       text-decoration: none;
-      color: var(--accent-strong);
-      background: #ffffff;
+      color: #111827;
+      background: #fefdf9;
     }
 
     .detail-reply textarea {
@@ -515,12 +556,14 @@
       min-height: 90px;
       resize: vertical;
       font-family: inherit;
+      background: #f8f7f3;
     }
 
     .detail-reply textarea:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 1px rgba(176, 139, 79, 0.2);
+      background: #fefdf9;
     }
 
     .detail-actions {
@@ -530,12 +573,19 @@
       margin-top: 10px;
     }
 
-    /* PIN modal */
+    .detail-actions .primary-button {
+      width: auto;
+      padding-inline: 18px;
+      font-size: 13px;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.32);
+    }
+
+    /* PIN MODAL */
 
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -546,11 +596,11 @@
     .pin-card {
       max-width: 360px;
       width: 100%;
-      background: #ffffff;
+      background: #fdfbf6;
       border-radius: 16px;
-      padding: 18px 18px 16px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+      padding: 16px 16px 14px;
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
     }
 
     .pin-title {
@@ -563,12 +613,13 @@
       font-size: 13px;
       color: var(--text-sub);
       margin-bottom: 12px;
+      line-height: 1.5;
     }
 
     .pin-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .pin-input {
@@ -579,12 +630,14 @@
       font-size: 16px;
       text-align: center;
       letter-spacing: 6px;
+      background: #f8f7f3;
     }
 
     .pin-input:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 1px rgba(176, 139, 79, 0.25);
+      background: #fefdf9;
     }
 
     .pin-actions {
@@ -598,7 +651,7 @@
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       padding: 7px 14px;
-      background: #f9fafb;
+      background: #f8f7f3;
       font-size: 13px;
       cursor: pointer;
     }
@@ -607,25 +660,25 @@
       border-radius: 999px;
       border: none;
       padding: 8px 16px;
-      background: var(--accent);
-      color: #ffffff;
+      background: #111827;
+      color: #f9fafb;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
     }
 
-    .status-bar {
-      margin-top: 10px;
-      font-size: 12px;
+    .pin-helper {
+      font-size: 11px;
       color: var(--text-sub);
-      min-height: 16px;
+      margin-top: 2px;
     }
+
+    /* RESPONSIVE */
 
     @media (max-width: 720px) {
       .header-card {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
       }
 
       .header-right {
@@ -634,7 +687,7 @@
       }
 
       .doctor-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .case-list {
@@ -647,14 +700,17 @@
   <div class="app">
     <header class="header-card">
       <div class="header-left">
-        <div class="avatar">K</div>
-        <div>
-          <div class="header-text-main">닥터케이 필러 상담</div>
-          <div class="header-text-sub">전신 필러 전문 온라인 프리 상담</div>
-          <div class="header-copy">
+        <div class="logo-mark">
+          <span class="logo-k">K</span>
+        </div>
+        <div class="logo-text-block">
+          <div class="brand-line">DR.K LAB</div>
+          <div class="brand-sub">FULL BODY FILLER LAB</div>
+          <div class="brand-copy">
             <strong>“이거 필러로 돼요? 얼마나 넣어야 해요?”</strong><br />
-            전신을 필러로 다뤄온 닥터케이가 온라인에서 방향을 잡아드리는 상담입니다.<br />
-            실시간 채팅은 아니지만, <strong>탑 티어 답변을 원하신다면 조금만 기다려 주세요!</strong>
+            머리부터 발끝까지 필러만으로 조형해 온 닥터케이가<br />
+            온라인에서 방향을 먼저 잡아드리는 프리 상담입니다.<br />
+            실시간 채팅은 아니지만, <strong>탑 티어 답변을 원하신다면 조금만 기다려 주세요.</strong>
           </div>
         </div>
       </div>
@@ -663,7 +719,9 @@
           <button id="btn-user-mode" class="mode-btn mode-btn--active">사용자 모드</button>
           <button id="btn-doctor-mode" class="mode-btn">닥터 모드</button>
         </div>
-        <div class="hint-pill">이 브라우저에서만 닥터 모드 PIN이 저장됩니다.</div>
+        <div class="header-hint">
+          이 브라우저에서만 닥터 모드 PIN이 저장됩니다.
+        </div>
       </div>
     </header>
 
@@ -671,59 +729,63 @@
     <main id="user-section">
       <form id="consult-form">
         <div class="card">
-          <div class="section-title">1단계 · 어디가 제일 고민이세요?</div>
-          <div class="section-sub">관심 부위 / 키워드와 지금 제일 고민되는 부분을 편하게 적어 주세요.</div>
+          <div class="section-title">1단계 · 어디가 가장 고민이신가요?</div>
+          <div class="section-sub">
+            필러를 생각하고 계신 부위와 현재 가장 신경 쓰이는 부분을 편하게 적어 주세요.
+          </div>
 
           <div class="field-row">
             <label for="field-part">관심 부위 / 키워드</label>
-            <div class="field-note">예: 골반필러, 힙딥, 어깨, 가슴골 등</div>
+            <div class="field-note">예: 골반필러, 힙딥, 어깨라인, 가슴골, 정수리, 손등 등</div>
             <input id="field-part" class="input" />
           </div>
 
           <div class="field-row">
             <label for="field-concern">지금 제일 고민되는 부분</label>
-            <div class="field-note">예: 골반이 너무 얇아서 라인이 없어요 등</div>
+            <div class="field-note">예: 골반이 일자라서 바지가 안 예쁘게 떨어져요 / 가슴골이 비어 보입니다 등</div>
             <textarea id="field-concern" class="textarea"></textarea>
           </div>
         </div>
 
         <div class="card">
-          <div class="section-title">2단계 · 바뀌었으면 하는 느낌 / 이미지</div>
-          <div class="section-sub">원하는 분위기, 이미지, 본인이 생각하는 목표 느낌을 적어 주세요.</div>
+          <div class="section-title">2단계 · 바뀌었으면 하는 느낌</div>
+          <div class="section-sub">
+            “어떤 느낌”을 원하시는지, 스스로 생각하는 목표 이미지를 적어 주세요.
+          </div>
 
           <div class="field-row">
             <label for="field-goal">원하는 느낌 / 목표</label>
-            <div class="field-note">예: 자연스럽게 골반 라운드 볼륨 / 손등은 나이티만 줄어든 정도 등</div>
+            <div class="field-note">예: 골반은 자연스럽게 라운드 / 어깨는 살짝 각지게 / 손등은 나이 티만 줄어든 정도 등</div>
             <textarea id="field-goal" class="textarea"></textarea>
           </div>
 
           <div class="field-row">
-            <label for="field-change">어느 정도까지 바꾸고 싶으세요?</label>
+            <label for="field-change">변화 강도</label>
             <select id="field-change">
-              <option value="">선택</option>
-              <option value="soft">티만 아주 살짝 나는 정도</option>
-              <option value="standard">표준 (주변에서 “예뻐졌네?” 하는 정도)</option>
-              <option value="strong">확실하게 달라 보이는 변화</option>
+              <option value="">선택해 주세요</option>
+              <option value="soft">아주 살짝 티 나는 정도</option>
+              <option value="standard">주변에서 “확실히 예뻐졌다” 할 정도</option>
+              <option value="strong">사진/전후가 확실하게 다른 변화</option>
             </select>
           </div>
         </div>
 
         <div class="card">
-          <div class="section-title">3단계 · 참고 이미지 & 메모</div>
+          <div class="section-title">3단계 · 참고 이미지 & 사진 업로드</div>
           <div class="section-sub">
-            다른 병원 전후, 셀카, 보정 이미지, 셀럽 이미지 링크 등 무엇이든 좋아요. 편하게 올려 주세요.
+            다른 병원 전후, 셀카, 본인이 보정한 사진, 셀럽 이미지 등 무엇이든 참고가 됩니다.
           </div>
 
           <div class="field-row">
             <label for="field-refnote">참고 전후 / 이미지 메모</label>
-            <div class="field-note">예: 인스타에서 본 전후 느낌 / 본인이 보정한 후 사진 설명 등</div>
+            <div class="field-note">예: 인스타에서 본 전후 느낌 설명 / 본인이 보정한 후 사진의 포인트 등</div>
             <textarea id="field-refnote" class="textarea"></textarea>
           </div>
 
           <div class="field-row">
             <label>사진 업로드 (정면 / 좌45° / 우45° / 후면)</label>
             <div class="field-note">
-              지금은 테스트로 최대 4장까지 업로드 가능합니다. 얼굴/바디 모두 가능하고, 민감하면 얼굴은 가려도 됩니다.
+              지금은 테스트 버전으로 최대 4장까지 업로드 가능합니다. 얼굴, 바디 모두 가능하며 원하시면 얼굴은 가리셔도 됩니다.
             </div>
 
             <div class="file-row">
@@ -744,11 +806,12 @@
             </div>
           </div>
 
-          <div class="field-row" style="margin-top: 14px;">
-            <button id="btn-submit" type="submit" class="primary-button">상담 보내기</button>
+          <div class="field-row" style="margin-top: 16px;">
+            <button id="btn-submit" type="submit" class="primary-button">Dr.K Lab로 상담 보내기</button>
             <div id="submit-state"></div>
             <p class="helper">
-              업로드는 Wi-Fi 기준으로 수 초 정도 걸릴 수 있습니다. 창을 닫지 마시고 잠시만 기다려 주세요.
+              사진 용량과 네트워크에 따라 업로드에 수 초 정도 소요될 수 있습니다.<br />
+              창을 닫지 마시고 잠시만 기다려 주세요.
             </p>
           </div>
         </div>
@@ -759,12 +822,10 @@
     <!-- DOCTOR MODE -->
     <main id="doctor-section" class="hidden">
       <div class="card">
-        <div class="doctor-intro">
-          <div class="section-title">닥터케이 대기함</div>
-          <div class="section-sub">
-            전국에서 들어오는 “이거 필러로 돼요?” 케이스를<br />
-            실시간 채팅이 아니라, <strong>차트를 하나씩 열어 보면서 답변 남기는 형태</strong>로 관리합니다.
-          </div>
+        <div class="section-title">Dr.K Lab · 케이스 대기함</div>
+        <div class="section-sub">
+          전국에서 들어오는 “이거 필러로 돼요?” 케이스를<br />
+          실시간 채팅이 아니라, <strong>차트를 하나씩 열어보며 답변을 남기는 방식</strong>으로 관리합니다.
         </div>
 
         <div class="doctor-toolbar">
@@ -774,20 +835,22 @@
             <button class="pill-button" data-filter="in_progress">검토 중</button>
             <button class="pill-button" data-filter="answered">답변 완료</button>
           </div>
-          <button id="btn-refresh" class="ghost-button">새로 고침</button>
+          <button id="btn-refresh" class="ghost-button">목록 새로 고침</button>
         </div>
 
         <div class="doctor-layout">
-          <div class="case-list card" style="padding: 10px 10px 10px;">
-            <div id="case-list">
-              <div class="muted-box">아직 접수된 케이스가 없습니다.</div>
+          <div class="case-list-wrapper">
+            <div id="case-list" class="case-list">
+              <div class="muted-box">
+                아직 접수된 케이스가 없습니다.
+              </div>
             </div>
           </div>
 
           <div class="card">
             <div class="section-title" style="margin-bottom: 6px;">케이스 차트</div>
             <div id="case-detail-empty" class="muted-box">
-              왼쪽 목록에서 케이스를 선택하면 상세 내용과 답변 작성 칸이 여기에 표시됩니다.
+              왼쪽에서 케이스를 선택하면, 상세 내용과 답변 작성 칸이 여기 차트 형식으로 열립니다.
             </div>
             <div id="case-detail" class="hidden"></div>
           </div>
@@ -802,7 +865,7 @@
     <div class="pin-card">
       <div id="pin-title" class="pin-title">닥터 모드 PIN 설정</div>
       <div id="pin-desc" class="pin-desc">
-        처음 한 번만 여섯 자리 숫자로 PIN을 만듭니다. 이 브라우저에서만 사용됩니다.
+        이 브라우저에서만 사용할 여섯 자리 숫자 PIN을 한 번 설정합니다.
       </div>
       <div class="pin-row">
         <input id="pin1" class="pin-input" type="password" inputmode="numeric" maxlength="6" />
@@ -810,7 +873,9 @@
           <input id="pin2" class="pin-input" type="password" inputmode="numeric" maxlength="6" />
         </div>
       </div>
-      <p class="helper small">숫자 여섯 자리만 사용해 주세요. 생년월일 그대로 쓰는 것은 피하는 것이 좋습니다.</p>
+      <div class="pin-helper">
+        숫자 여섯 자리만 가능합니다. 생년월일 그대로 사용은 권장하지 않습니다.
+      </div>
       <div class="pin-actions">
         <button id="pin-cancel" class="pin-cancel">취소</button>
         <button id="pin-ok" class="pin-ok">확인</button>
@@ -825,7 +890,7 @@
       const SUPABASE_URL = "https://mljhxswtlahjqexlxlwh.supabase.co";
       const SUPABASE_KEY = "sb_publishable_zhjzgeDAxcImr4july-7Pw_2h2DQAc3";
       const BUCKET_NAME = "drk-photos";
-      const PIN_KEY = "drk_doctor_pin_v1";
+      const PIN_KEY = "drk_lab_doctor_pin_v1";
 
       const { createClient } = supabase;
       const db = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -947,6 +1012,18 @@
         }
       }
 
+      function badgeClass(status) {
+        switch (status) {
+          case "answered":
+            return "badge--status-answered";
+          case "in_progress":
+            return "badge--status-in_progress";
+          case "new":
+          default:
+            return "badge--status-new";
+        }
+      }
+
       function normalizeMessages(raw) {
         if (!raw) return [];
         if (Array.isArray(raw)) return raw;
@@ -988,8 +1065,8 @@
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = "보내는 중...";
-        submitState.textContent = "사진과 내용을 업로드하고 있습니다. 잠시만 기다려 주세요.";
+        submitBtn.textContent = "보내는 중…";
+        submitState.textContent = "사진과 내용을 업로드하는 중입니다. 잠시만 기다려 주세요.";
         showStatus("");
 
         try {
@@ -1044,18 +1121,18 @@
           consultForm.reset();
           changeSelect.value = "";
           submitState.textContent = "";
-          showStatus("상담이 접수되었습니다. 닥터케이가 순차적으로 확인 후 답변을 남깁니다.");
+          showStatus("상담이 접수되었습니다. Dr.K Lab에서 순차적으로 확인 후 답변을 남깁니다.");
         } catch (err) {
           console.error(err);
           alert(err.message || "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
           submitState.textContent = "";
         } finally {
           submitBtn.disabled = false;
-          submitBtn.textContent = "상담 보내기";
+          submitBtn.textContent = "Dr.K Lab로 상담 보내기";
         }
       });
 
-      // Doctor mode
+      // Doctor mode: list & detail
 
       async function loadCases() {
         showDoctorStatus("케이스 목록을 불러오는 중입니다…");
@@ -1082,13 +1159,14 @@
           showDoctorStatus(cases.length ? "" : "현재 대기 중인 케이스가 없습니다.");
         } catch (err) {
           console.error(err);
-          showDoctorStatus(err.message);
+          showDoctorStatus(err.message || "오류가 발생했습니다.");
         }
       }
 
       function renderCaseList() {
         if (!cases.length) {
-          caseListEl.innerHTML = '<div class="muted-box">아직 접수된 케이스가 없습니다.</div>';
+          caseListEl.innerHTML =
+            '<div class="muted-box">아직 접수된 케이스가 없습니다.</div>';
           return;
         }
 
@@ -1117,7 +1195,7 @@
               escapeHtml(c.part || "(부위 미작성)") +
               "</div>" +
               '<div class="case-row-sub">' +
-              escapeHtml(shorten(c.concern || "", 38)) +
+              escapeHtml(shorten(c.concern || "", 42)) +
               "</div>" +
               "</div>" +
               '<div class="case-row-meta">' +
@@ -1126,7 +1204,7 @@
               '">' +
               statusLabel(c.status) +
               "</span>" +
-              '<span class="badge" style="background:#f9fafb;border-color:var(--border-soft);color:var(--text-sub);">' +
+              '<span class="badge" style="background:#f4f4f5;border-color:var(--border-soft);color:var(--text-sub);">' +
               formatDateShort(c.created_at) +
               "</span>" +
               "</div>" +
@@ -1136,18 +1214,6 @@
           .join("");
 
         caseListEl.innerHTML = html;
-      }
-
-      function badgeClass(status) {
-        switch (status) {
-          case "answered":
-            return "badge--status-answered";
-          case "in_progress":
-            return "badge--status-in_progress";
-          case "new":
-          default:
-            return "badge--status-new";
-        }
       }
 
       function renderCaseDetail(id) {
@@ -1160,7 +1226,7 @@
           return;
         }
         selectedCaseId = id;
-        renderCaseList(); // active 표시 다시
+        renderCaseList();
 
         const messages = normalizeMessages(c.messages);
         let lastDoctor = "";
@@ -1234,10 +1300,10 @@
           "<p>" +
           (c.change_level
             ? c.change_level === "soft"
-              ? "티만 아주 살짝 나는 정도"
+              ? "아주 살짝 티 나는 정도"
               : c.change_level === "standard"
-              ? "표준 (주변에서 “예뻐졌네?” 하는 정도)"
-              : "확실하게 달라 보이는 변화"
+              ? "주변에서 “예뻐졌다” 할 정도"
+              : "사진/전후가 확실히 다른 변화"
             : "-") +
           "</p>" +
           "</div>" +
@@ -1259,9 +1325,9 @@
           '<textarea id="reply-text">' +
           escapeHtml(lastDoctor) +
           "</textarea>" +
-          '<p class="helper small">예: 필러로 가능 여부, 예상 난이도(쉬움/보통/어려움), 권장 CC와 주의점 등을 간단히 정리해 주세요.</p>' +
+          '<p class="helper small">예: 필러로 가능 여부, 예상 난이도(쉬움/보통/어려움), 권장 CC 범위, 주의점 등을 정리해 주세요.</p>' +
           '<div class="detail-actions">' +
-          '<button type="button" class="ghost-button" id="btn-mark-inprogress">검토 중 표시</button>' +
+          '<button type="button" class="ghost-button" id="btn-mark-inprogress">검토 중으로 표시</button>' +
           '<button type="button" class="primary-button" id="btn-save-reply">답변 저장</button>' +
           "</div>" +
           "</div>";
@@ -1380,8 +1446,7 @@
         } else {
           pinMode = "set";
           pinTitle.textContent = "닥터 모드 PIN 설정";
-          pinDesc.textContent =
-            "처음 한 번만 여섯 자리 숫자로 PIN을 만듭니다. 이 브라우저에서만 사용됩니다.";
+          pinDesc.textContent = "이 브라우저에서만 사용할 여섯 자리 숫자 PIN을 한 번 설정합니다.";
           pin2Wrapper.style.display = "block";
         }
         pin1.value = "";
@@ -1389,7 +1454,7 @@
         pinOverlay.classList.remove("hidden");
         setTimeout(function () {
           pin1.focus();
-        }, 10);
+        }, 20);
       }
 
       function closePinModal() {
@@ -1447,7 +1512,6 @@
         }
       });
 
-      // 초기 모드
       setMode("user");
     })();
   </script>
